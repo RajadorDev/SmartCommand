@@ -1,0 +1,16 @@
+---
+name: SmartCommand
+version: 1.0.0
+api: 2.0.0
+description: 'A framework for PocketMine'
+author: Rajador
+discord: rajadortv
+main: SmartCommand\Loader
+permissions:
+  member.command.use:
+    description: 'Default permission for server members use commands'
+    default: true
+  administrator.command.use:
+    description: 'Default permission for admin use commands'
+    default: op
+...
