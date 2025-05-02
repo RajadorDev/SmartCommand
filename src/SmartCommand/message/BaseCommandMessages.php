@@ -19,12 +19,12 @@ declare (strict_types=1);
 
 namespace SmartCommand\message;
 
-use InvalidArgumentException;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use InvalidArgumentException;
+use pocketmine\command\Command;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\CommandSender;
 
 class BaseCommandMessages implements CommandMessages
 {

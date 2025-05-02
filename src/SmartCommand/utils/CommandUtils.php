@@ -91,4 +91,13 @@ final class CommandUtils
         ->registerAll($prefix, $commands);
     }
 
+    /**
+     * @param CommandSender $sender
+     * @return string
+     */
+    public static function hashSender(CommandSender $sender) : string
+    {
+        return $sender instanceof Player ? strtolower($sender->getName()) : '@CONSOLE'; 
+    }
+
 }

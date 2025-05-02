@@ -19,11 +19,10 @@ declare (strict_types=1);
 
 namespace SmartCommand\command\rule\defaults;
 
-use pocketmine\command\CommandSender;
 use pocketmine\Player;
-use SmartCommand\command\rule\CommandSenderRule;
-use SmartCommand\command\SmartCommand;
+use pocketmine\command\CommandSender;
 use SmartCommand\message\CommandMessages;
+use SmartCommand\command\rule\CommandSenderRule;
 
 class OnlyInGameCommandRule implements CommandSenderRule
 {
@@ -33,7 +32,7 @@ class OnlyInGameCommandRule implements CommandSenderRule
         return $sender instanceof Player;
     }
 
-    public function getMessage($command): string
+    public function getMessage($command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::ONLY_PLAYER_ALLOWED);
     }

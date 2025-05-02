@@ -20,9 +20,8 @@ declare (strict_types=1);
 namespace SmartCommand\command\rule\defaults;
 
 use pocketmine\command\CommandSender;
-use SmartCommand\command\rule\CommandSenderRule;
-use SmartCommand\command\SmartCommand;
 use SmartCommand\message\CommandMessages;
+use SmartCommand\command\rule\CommandSenderRule;
 
 class PermissionCommandRule implements CommandSenderRule
 {
@@ -32,7 +31,7 @@ class PermissionCommandRule implements CommandSenderRule
         return $sender->hasPermission($command->getPermission());
     }
 
-    public function getMessage($command): string
+    public function getMessage($command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::NOT_ALLOWED);
     }

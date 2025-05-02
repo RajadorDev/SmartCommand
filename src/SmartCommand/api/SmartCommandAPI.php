@@ -19,11 +19,11 @@ declare (strict_types=1);
 
 namespace SmartCommand\api;
 
-use pocketmine\command\CommandSender;
-use pocketmine\Server;
-use SmartCommand\command\SmartCommand;
-use SmartCommand\Loader;
 use Throwable;
+use pocketmine\Server;
+use SmartCommand\Loader;
+use pocketmine\command\CommandSender;
+use SmartCommand\command\SmartCommand;
 
 final class SmartCommandAPI
 {

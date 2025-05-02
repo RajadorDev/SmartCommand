@@ -6,6 +6,7 @@
     "no-allowed": "§cYou do not have permission to use this command",
     "in-game-command": "§cYou can only use this command in-game!",
     "in-console-command": "§cYou can only use this command in the console!",
+    "sender-cooldown": "§cPlease wait §f{cooldown}§7s §cbefore using this command again!",
     "usage-line": "§8-  §f{usage}",
     "arguments": {
         "bool": "bool",

@@ -43,7 +43,7 @@ trait RulesHolderTrait
         {
             if (!$rule->parse($sender, $this))
             {
-                $sender->sendMessage($rule->getMessage($this));
+                $sender->sendMessage($rule->getMessage($this, $sender));
                 return false;
             }
         }

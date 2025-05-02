@@ -7,6 +7,7 @@
     "in-game-command": "§cVocê só pode usar este comando dentro do jogo!",
     "in-console-command": "§cVocê só pode usar este comando no console!",
     "usage-line": "§8-  §f{usage}",
+    "sender-cooldown": "§cDigite o comando novamente em §f{cooldown}§7s§c!",
     "arguments": {
         "bool": "bool",
         "number": "numero",

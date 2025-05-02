@@ -40,6 +40,8 @@ interface CommandMessages
 
     const USAGE_LINE_FORMAT = 'usage-line';
 
+    const SENDER_IN_COOLDOWN = 'sender-cooldown';
+
     /**
      * @param string $id
      * @return boolean
