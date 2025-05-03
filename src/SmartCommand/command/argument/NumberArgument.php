@@ -37,6 +37,7 @@ class NumberArgument extends BaseArgument
                     } else {
                         $given = (int) $given;
                     }
+                    return true;
                 }
                 return false;
             }

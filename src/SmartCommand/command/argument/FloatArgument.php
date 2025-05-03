@@ -24,7 +24,7 @@ class FloatArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true)
     {
-        parent::__construct($name, 'number', $required, static function (string &$given) : bool {
+        parent::__construct($name, 'float', $required, static function (string &$given) : bool {
             if (is_numeric($given))
             {
                 $given = (float) $given;
