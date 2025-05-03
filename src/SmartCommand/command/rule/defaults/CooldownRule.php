@@ -83,12 +83,22 @@ class CooldownRule implements CommandSenderRule
 
     public function parse(CommandSender $sender, $command): bool
     {
-        return !$this->inCooldown($sender);
+        if (!$this->inCooldown($sender))
+        {
+            $this->addToCooldown($sender);
+            return true;
+        }
+        return false;
     }
 
     public function getMessage($command, CommandSender $sender): string
     {
-        return $command->getMessages()->get(CommandMessages::SENDER_IN_COOLDOWN, '{cooldown}', number_format($this->getCooldownTime($sender), 2));
+        return $command->getMessages()->get(CommandMessages::SENDER_IN_COOLDOWN, '{cooldown}', number_format($this->getCooldownTime($sender) - microtime(true), 2));
+    }
+
+    public static function secondsToMs(int $seconds) : int 
+    {
+        return $seconds * 1000;
     }
 
 }
