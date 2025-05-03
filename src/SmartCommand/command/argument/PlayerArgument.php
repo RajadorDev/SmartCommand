@@ -35,7 +35,7 @@ class PlayerArgument extends BaseArgument
 
     public function __construct(string $name, int $searchType, bool $required = true)
     {
-        if (in_array($searchType, [self::SEARCH_FROM_PREFIX, self::SEARCH_EXACT]))
+        if (!in_array($searchType, [self::SEARCH_FROM_PREFIX, self::SEARCH_EXACT]))
         {
             throw new InvalidArgumentException("$searchType is not valid for fetch players");
         }
