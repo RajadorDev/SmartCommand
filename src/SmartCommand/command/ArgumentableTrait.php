@@ -155,13 +155,14 @@ trait ArgumentableTrait
 
     protected function formatArguments(array &$args, CommandSender $sender, CommandMessages $messages, bool $sendErrorMessage = true) : bool 
     {
+        $realArgs = $args;
         foreach ($args as $index => $argumentSenderValue)
         {
             if ($argument = $this->getArgument($index))
             {
                 if ($argument instanceof TextArgument)
                 {
-                    $argumentSenderValue = implode(' ', array_slice($args, $index));
+                    $argumentSenderValue = implode(' ', array_slice($realArgs, $index));
                 }
                 if ($argument->parse($argumentSenderValue))
                 {
