@@ -95,7 +95,7 @@ abstract class SmartCommand extends Command
         try {
             if ($this->parseRules($sender))
             {
-                CommandUtils::removeEmptyArgs($args);
+                CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (isset($args[0]))
                 {
                     if (!$this->tryExecuteSubCommand($sender, $commandLabel, $args))

@@ -19,13 +19,10 @@ declare (strict_types=1);
 
 namespace SmartCommand\utils;
 
-use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\utils\Config;
+use pocketmine\command\CommandSender;
 use SmartCommand\command\SmartCommand;
-use SmartCommand\message\BaseCommandMessages;
-use SmartCommand\message\CommandMessages;
 
 final class CommandUtils 
 {
@@ -34,16 +31,18 @@ final class CommandUtils
      * It will remove every strings with none content
      *
      * @param array $args
+     * @param int|null $ignoreIndexFrom
      * @return void
      */
-    public static function removeEmptyArgs(array &$args) 
+    public static function removeEmptyArgs(array &$args, $ignoreIndexFrom = null) 
     {
         $args = array_values(
             array_filter(
                 $args,
-                static function (string $text) : bool {
-                    return trim($text) != '';
-                }
+                static function (string $text, int $key) use ($ignoreIndexFrom) : bool {
+                    return (trim($text) != '' || (is_null($ignoreIndexFrom) || $key >= $ignoreIndexFrom));
+                },
+                ARRAY_FILTER_USE_BOTH
             )
         );
     }

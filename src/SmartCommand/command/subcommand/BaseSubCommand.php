@@ -120,7 +120,7 @@ abstract class BaseSubCommand implements SubCommand
         try {
             if ($this->parseRules($sender))
             {
-                CommandUtils::removeEmptyArgs($args);
+                CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (is_int($argsNeedle = $this->getArgNeedleIndex()))
                 {
                     if (isset($args[$argsNeedle]))
