@@ -9,7 +9,7 @@ SmartCommand is a mini **framework for PocketMine**. With SmartCommand, you can 
 
 ## Installation
 
-First, install the `phar` file from here.
+First, install the `phar` file from [here](https://github.com/RajadorDev/SmartCommand/releases).
 
 Put the `phar` file in your PocketMine server inside the `plugins/` folder.
 
