@@ -32,6 +32,18 @@ trait RulesHolderTrait
         $this->rules[] = $rule;
     }
 
+    /**
+     * @param CommandSenderRule ...$rules
+     * @return void
+     */
+    protected function registerRules(...$rules) 
+    {
+        foreach ($rules as $rule)
+        {
+            $this->registerRule($rule);
+        }
+    }
+
     public function getRules() : array 
     {
         return $this->rules;
