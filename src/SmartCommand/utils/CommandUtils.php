@@ -99,4 +99,9 @@ final class CommandUtils
         return $sender instanceof Player ? strtolower($sender->getName()) : '@CONSOLE'; 
     }
 
+    public static function validIndexType($index) : bool 
+    {
+        return is_string($index) || is_int($index);
+    }
+
 }

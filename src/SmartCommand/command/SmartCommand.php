@@ -106,19 +106,19 @@ abstract class SmartCommand extends Command
                             {
                                 if ($this->formatArguments($args, $sender, $this->getMessages()))
                                 {
-                                    $this->onRun($sender, $commandLabel, $args);
+                                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                                 }
                             } else {
                                 $this->sendUsage($sender, $commandLabel);
                             }
                         } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
-                            $this->onRun($sender, $commandLabel, $args);
+                            $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                         }
                     }
                 } else if (is_int($this->getArgNeedleIndex())) {
                     $this->sendUsage($sender, $commandLabel);
                 } else {
-                    $this->onRun($sender, $commandLabel, $args);
+                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                 }
             }
         } catch (Throwable $error) {
@@ -126,6 +126,14 @@ abstract class SmartCommand extends Command
             SmartCommandAPI::commandErrorLog($sender, $error, '/' . $commandLabel);
             $this->messages->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
+    }
+
+    protected function makeArguments(array $args) : CommandArguments
+    {
+        return new CommandArguments(
+            $args,
+            $this->requiredMap
+        );
     }
 
     /**
@@ -187,9 +195,9 @@ abstract class SmartCommand extends Command
      *
      * @param CommandSender|Player $sender
      * @param string $label
-     * @param array $args
+     * @param CommandArguments $args
      * @return void
      */
-    abstract protected function onRun(CommandSender $sender, string $label, array $args);
+    abstract protected function onRun(CommandSender $sender, string $label, CommandArguments $args);
 
 }

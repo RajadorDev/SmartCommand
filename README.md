@@ -25,12 +25,11 @@ depend: SmartCommand
 You can create a new command using the abstract class `SmartCommand\command\SmartCommand`:
 
 ```php
-<?php
-
 use pocketmine\Server;
 use pocketmine\command\CommandSender;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\argument\TextArgument;
+use SmartCommand\command\CommandArguments;
 
 class SayCommand extends SmartCommand
 {
@@ -74,10 +73,10 @@ class SayCommand extends SmartCommand
     }
 
     /** This method will be called after all rules, arguments, and SubCommands have been processed */
-    protected function onRun(CommandSender $sender, string $label, array $args)
+    protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
     {
         /** Access the argument directly without checking its existence :) */
-        $message = $args['message'];
+        $message = $args->getString('message');
         Server::getInstance()->broadcastMessage("{$sender->getName()} $message");
         $sender->sendMessage('Message sent');
     }
@@ -94,6 +93,7 @@ use SmartCommand\command\SmartCommand;
 use SmartCommand\command\argument\BoolArgument;
 use SmartCommand\command\argument\StringArgument;
 use SmartCommand\command\argument\IntegerArgument;
+use SmartCommand\command\CommandArguments;
 
 protected function prepare()
 {
@@ -104,12 +104,12 @@ protected function prepare()
     ]);
 }
 
-protected function onRun(CommandSender $sender, string $label, array $args)
+protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
 {
     /** If all arguments are valid, they will be converted to their correct types: **/
-    var_dump($args['amount']); // integer
-    var_dump($args['target']); // string
-    var_dump($args['warn_player']); // bool
+    var_dump($args->getInteger('amount')); // integer
+    var_dump($args->getString('target')); // string
+    var_dump($args->getBool('warn_player')); // bool
 }
 ```
 
@@ -190,6 +190,7 @@ You can create subcommands with arguments and rules the same way as `SmartComman
 use pocketmine\Server;
 use pocketmine\command\CommandSender;
 use SmartCommand\command\argument\TextArgument;
+use SmartCommand\command\CommandArguments;
 use SmartCommand\command\subcommand\BaseSubCommand;
 
 class PopupSubCommand extends BaseSubCommand
@@ -205,9 +206,9 @@ class PopupSubCommand extends BaseSubCommand
         $this->registerArgument(0, new TextArgument('text'));
     }
 
-    protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, array $args)
+    protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args)
     {
-        $text = $args['text'];
+        $text = $args->getString('text');
         Server::getInstance()->broadcastPopup($text);
         $sender->sendMessage('Popup sent');
     }

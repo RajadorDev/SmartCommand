@@ -83,7 +83,7 @@ class BaseArgument implements Argument
 
     public function getWrongMessage(CommandMessages $commandMessages, string $argumentUsed): string
     {
-        return $commandMessages->get(CommandMessages::INVALID_ARGUMENT, ['{name}', '{description}', '{used}'], [$this->getName(), $this->getTranslatedTypeName($commandMessages), $argumentUsed]);
+        return $commandMessages->get(CommandMessages::INVALID_ARGUMENT, ['{name}', '{type_description}', '{used}'], [$this->getName(), $this->getTranslatedTypeName($commandMessages), $argumentUsed]);
     }
 
 }
