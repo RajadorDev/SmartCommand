@@ -178,6 +178,7 @@ trait ArgumentableTrait
                 }
                 continue;
             }
+            $realArgs = array_merge($realArgs, array_slice($args, $index));
             break;
         }
         return true;

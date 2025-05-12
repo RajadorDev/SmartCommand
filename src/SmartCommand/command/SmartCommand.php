@@ -128,7 +128,14 @@ abstract class SmartCommand extends Command
         }
     }
 
-    protected function generateUsage(string $label, int $page, int $maxPerPage) : string 
+    /**
+     * @param string $label
+     * @param CommandSender $sender
+     * @param integer $page
+     * @param integer $maxPerPage
+     * @return string
+     */
+    protected function generateUsage(string $label, CommandSender $sender, int $page = 0, int $maxPerPage = 0) : string 
     {
         return $this->getUsage() . implode(
             "\n",
@@ -136,19 +143,19 @@ abstract class SmartCommand extends Command
                 static function (string $usageLine) : string {
                     return $usageLine;
                 },
-                $this->generateUsageList($label, $page, $maxPerPage)
+                $this->generateUsageList($label,$sender, $page, $maxPerPage)
             )
         );
     }
 
     protected function sendUsage(CommandSender $commandSender, string $label = null, int $page = 0, int $maxPerPage = 0)
     {
-        $commandSender->sendMessage($this->generateUsage($label, $page, $maxPerPage));
+        $commandSender->sendMessage($this->generateUsage($label, $commandSender, $page, $maxPerPage));
     }
 
-    protected function generateUsageList(string $label, int $page = null, int $maxPerPage = null) : array 
+    protected function generateUsageList(string $label, CommandSender $sender, int $page = null, int $maxPerPage = null) : array 
     {
-        $subCommands = $this->generateSubCommandsUsages($label);
+        $subCommands = $this->generateSubCommandsUsages($label, $sender);
         $arguments = count($this->arguments) > 0 ? $this->generateArgumentsList($label, $this->getMessages()) : null;
         if ($arguments)
         {

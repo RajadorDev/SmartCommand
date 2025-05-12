@@ -95,14 +95,18 @@ trait SubCommandHolderTrait
 
     /**
      * @param string $commandName
+     * @param CommandSender $sender
      * @return array
      */
-    public function generateSubCommandsUsages(string $commandName) : array 
+    public function generateSubCommandsUsages(string $commandName, CommandSender $sender) : array 
     {
         $list = [];
         foreach ($this->subCommands as $subCommand)
         {
-            $list[] = $subCommand->getUsage($commandName);
+            if ($sender->hasPermission($subCommand->getPermission()))
+            {
+                $list[] = $subCommand->getUsage($commandName);
+            }
         }
         return $list;
     }
