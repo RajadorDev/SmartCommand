@@ -171,7 +171,8 @@ trait ArgumentableTrait
                 } else {
                     if ($sendErrorMessage)
                     {
-                        $messages->send($sender, CommandMessages::INVALID_ARGUMENT, ['{name}', '{type_description}'], [$argument->getName(), $argument->getTranslatedTypeName($messages)]);
+                        $message = $argument->getWrongMessage($messages, $argumentSenderValue);
+                        $sender->sendMessage($message);
                     }
                     return false;
                 }

@@ -22,6 +22,7 @@ namespace SmartCommand\command\argument;
 use InvalidArgumentException;
 use pocketmine\Server;
 use pocketmine\Player;
+use SmartCommand\message\CommandMessages;
 
 class PlayerArgument extends BaseArgument
 {
@@ -55,4 +56,10 @@ class PlayerArgument extends BaseArgument
         });
         $this->searchType = $searchType;
     }
+
+    public function getWrongMessage(CommandMessages $commandMessages, string $argumentUsed): string
+    {
+        return $commandMessages->get(CommandMessages::PLAYER_NOT_FOUND, '{name}', $argumentUsed);
+    }
+    
 }

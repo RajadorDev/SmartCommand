@@ -25,9 +25,9 @@ class BoolArgument extends BaseArgument
     /** @var string */
     protected $trueName, $falseName;
 
-    public function __construct(string $name, bool $required = true, string $trueName = 'true', string $falseName = 'false')
+    public function __construct(string $name, bool $required = true, string $trueName = 'true', string $falseName = 'false', bool $showAsList = false)
     {
-        parent::__construct($name, 'bool', $required, function (string &$given) : bool {
+        parent::__construct($name, $showAsList ? implode('|', [$trueName, $falseName]) : 'bool', $required, function (string &$given) : bool {
             $input = strtolower($given);
             if (in_array($input, [$this->trueName, $this->falseName]))
             {
@@ -39,4 +39,5 @@ class BoolArgument extends BaseArgument
         $this->trueName = $trueName;
         $this->falseName = $falseName;
     }
+    
 }
