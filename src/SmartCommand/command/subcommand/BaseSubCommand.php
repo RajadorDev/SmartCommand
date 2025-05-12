@@ -26,6 +26,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\command\CommandArguments;
 use SmartCommand\command\rule\defaults\PermissionCommandRule;
 use SmartCommand\command\rule\RulesHolderTrait;
 use SmartCommand\message\CommandMessages;
@@ -127,13 +128,13 @@ abstract class BaseSubCommand implements SubCommand
                     {
                         if ($this->formatArguments($args, $sender, $this->getMessages()))
                         {
-                            $this->onRun($sender, $commandLabel, $subCommandLabel, $args);
+                            $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
                         }
                     } else {
                         $this->sendUsage($sender, $commandLabel, $subCommandLabel);
                     }
                 } else {
-                    $this->onRun($sender, $commandLabel, $subCommandLabel, $args);
+                    $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
                 }
             }
         } catch (Throwable $error) {
@@ -142,6 +143,11 @@ abstract class BaseSubCommand implements SubCommand
             SmartCommandAPI::commandErrorLog($sender, $error, $format);
             $this->getMessages()->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
+    }
+
+    protected function makeArguments(array $args) : CommandArguments
+    {
+        return new CommandArguments($args, $this->requiredMap);
     }
 
     protected function sendUsage(CommandSender $sender, string $commandLabel, string $subCommandLabel) 
@@ -178,10 +184,10 @@ abstract class BaseSubCommand implements SubCommand
      * @param CommandSender|Player $sender
      * @param string $commandLabel
      * @param string $subcommandLabel
-     * @param array $args
+     * @param CommandArguments $args
      * @return void
      */
-    abstract protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, array $args);
+    abstract protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args);
 
 
 }

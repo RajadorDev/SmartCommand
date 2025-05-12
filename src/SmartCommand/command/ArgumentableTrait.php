@@ -19,7 +19,6 @@ declare (strict_types=1);
 
 namespace SmartCommand\command;
 
-use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use SmartCommand\command\argument\Argument;
 use SmartCommand\command\argument\TextArgument;
@@ -31,6 +30,9 @@ trait ArgumentableTrait
 
     /** @var array<int,Argument> */
     protected $arguments = [];
+
+    /** @var array<string,bool> */
+    protected $requiredMap = [];
 
     /** @var string */
     protected $argumentsDescription = '';
@@ -52,6 +54,7 @@ trait ArgumentableTrait
                     if ($position == 0 || !is_null($this->getArgument($position - 1)))
                     {
                         $this->arguments[$position] = $argument;
+                        $this->requiredMap[$argument->getName()] = $argument->isRequired();
                         return $this;
                     } else {
                         throw new PrepareCommandException("Argument $position can't be in this position without a previous argument");
@@ -171,12 +174,14 @@ trait ArgumentableTrait
                 } else {
                     if ($sendErrorMessage)
                     {
-                        $messages->send($sender, CommandMessages::INVALID_ARGUMENT, ['{name}', '{type_description}'], [$argument->getName(), $argument->getTranslatedTypeName($messages)]);
+                        $message = $argument->getWrongMessage($messages, $argumentSenderValue);
+                        $sender->sendMessage($message);
                     }
                     return false;
                 }
                 continue;
             }
+            $realArgs = array_merge($realArgs, array_slice($args, $index));
             break;
         }
         return true;

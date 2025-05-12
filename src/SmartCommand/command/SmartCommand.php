@@ -106,19 +106,19 @@ abstract class SmartCommand extends Command
                             {
                                 if ($this->formatArguments($args, $sender, $this->getMessages()))
                                 {
-                                    $this->onRun($sender, $commandLabel, $args);
+                                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                                 }
                             } else {
                                 $this->sendUsage($sender, $commandLabel);
                             }
                         } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
-                            $this->onRun($sender, $commandLabel, $args);
+                            $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                         }
                     }
                 } else if (is_int($this->getArgNeedleIndex())) {
                     $this->sendUsage($sender, $commandLabel);
                 } else {
-                    $this->onRun($sender, $commandLabel, $args);
+                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                 }
             }
         } catch (Throwable $error) {
@@ -128,7 +128,22 @@ abstract class SmartCommand extends Command
         }
     }
 
-    protected function generateUsage(string $label, int $page, int $maxPerPage) : string 
+    protected function makeArguments(array $args) : CommandArguments
+    {
+        return new CommandArguments(
+            $args,
+            $this->requiredMap
+        );
+    }
+
+    /**
+     * @param string $label
+     * @param CommandSender $sender
+     * @param integer $page
+     * @param integer $maxPerPage
+     * @return string
+     */
+    protected function generateUsage(string $label, CommandSender $sender, int $page = 0, int $maxPerPage = 0) : string 
     {
         return $this->getUsage() . implode(
             "\n",
@@ -136,19 +151,19 @@ abstract class SmartCommand extends Command
                 static function (string $usageLine) : string {
                     return $usageLine;
                 },
-                $this->generateUsageList($label, $page, $maxPerPage)
+                $this->generateUsageList($label,$sender, $page, $maxPerPage)
             )
         );
     }
 
     protected function sendUsage(CommandSender $commandSender, string $label = null, int $page = 0, int $maxPerPage = 0)
     {
-        $commandSender->sendMessage($this->generateUsage($label, $page, $maxPerPage));
+        $commandSender->sendMessage($this->generateUsage($label, $commandSender, $page, $maxPerPage));
     }
 
-    protected function generateUsageList(string $label, int $page = null, int $maxPerPage = null) : array 
+    protected function generateUsageList(string $label, CommandSender $sender, int $page = null, int $maxPerPage = null) : array 
     {
-        $subCommands = $this->generateSubCommandsUsages($label);
+        $subCommands = $this->generateSubCommandsUsages($label, $sender);
         $arguments = count($this->arguments) > 0 ? $this->generateArgumentsList($label, $this->getMessages()) : null;
         if ($arguments)
         {
@@ -180,9 +195,9 @@ abstract class SmartCommand extends Command
      *
      * @param CommandSender|Player $sender
      * @param string $label
-     * @param array $args
+     * @param CommandArguments $args
      * @return void
      */
-    abstract protected function onRun(CommandSender $sender, string $label, array $args);
+    abstract protected function onRun(CommandSender $sender, string $label, CommandArguments $args);
 
 }

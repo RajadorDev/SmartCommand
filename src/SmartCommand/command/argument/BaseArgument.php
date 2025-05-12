@@ -81,4 +81,9 @@ class BaseArgument implements Argument
         return $barriers[0] . $this->name . ': ' . ($message ? $this->getTranslatedTypeName($message) : $this->typeName) . $barriers[1];
     }
 
+    public function getWrongMessage(CommandMessages $commandMessages, string $argumentUsed): string
+    {
+        return $commandMessages->get(CommandMessages::INVALID_ARGUMENT, ['{name}', '{type_description}', '{used}'], [$this->getName(), $this->getTranslatedTypeName($commandMessages), $argumentUsed]);
+    }
+
 }
