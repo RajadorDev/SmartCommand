@@ -24,12 +24,25 @@ use pocketmine\Server;
 use SmartCommand\Loader;
 use pocketmine\command\CommandSender;
 use SmartCommand\command\SmartCommand;
+use SmartCommand\api\command\FrameworkCommand;
 
 final class SmartCommandAPI
 {
 
     /** @var string */
     private static $commandErrorFolder, $commandErrorFile;
+
+    /** @var array{version:string,author:string,github:string,discord:string,api:string} */
+    private static $frameworkDescription;
+
+    /** @var Loader */
+    private static $plugin;
+
+    /** @return array{version:string,author:string,github:string,discord:string,api:string} */
+    public static function getFrameworkDescription() : array 
+    {
+        return self::$frameworkDescription;
+    }
 
     /**
      * @internal Used by Loader class
@@ -38,12 +51,22 @@ final class SmartCommandAPI
      */
     public static function init(Loader $loader)
     {
+        self::$plugin = $loader;
         self::$commandErrorFolder = $loader->getDataFolder() . DIRECTORY_SEPARATOR . 'error/';
         if (!file_exists(self::$commandErrorFolder))
         {
             mkdir(self::$commandErrorFolder);
         }
         self::$commandErrorFile = self::$commandErrorFolder . 'errors.log';
+        $pluginDescription = $loader->getDescription();
+        self::$frameworkDescription = [
+            'author' => 'Rajador',
+            'version' => $pluginDescription->getVersion(),
+            'api' => implode(', ', $pluginDescription->getCompatibleApis()),
+            'github' => 'https://github.com/RajadorDev/SmartCommand',
+            'discord' => 'rajadortv'
+        ];
+        SmartCommandAPI::register('smartcommand', new FrameworkCommand('smartcommand', 'SmartCommand framework', Loader::PREFIX . "\n", ['sc']));
     }
 
     /**
@@ -85,6 +108,11 @@ final class SmartCommandAPI
             self::$commandErrorFile,
             $currentFileData . "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}:" . ((string) $exception)
         );
+    }
+
+    public static function debug(string $text)
+    {
+        self::$plugin->getLogger()->debug($text);
     }
 
     

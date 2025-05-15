@@ -99,9 +99,34 @@ final class CommandUtils
         return $sender instanceof Player ? strtolower($sender->getName()) : '@CONSOLE'; 
     }
 
+    /**
+     * @param mixed $index
+     * @return boolean
+     */
     public static function validIndexType($index) : bool 
     {
         return is_string($index) || is_int($index);
+    }
+
+    /**
+     * @param array $texts
+     * @param boolean $returnText If false will return string[]
+     * @param string $prefix
+     * @return string|string[]
+     */
+    public static function textLinesWithPrefix(array $texts, bool $returnText = true, string $prefix = '§8-  §7')
+    {
+        $text = array_map(
+            static function (string $text) use ($prefix) : string {
+                return $prefix . $text;
+            },
+            $texts
+        );
+        if ($returnText)
+        {
+            return implode("\n", $text);
+        }
+        return $text;
     }
 
 }

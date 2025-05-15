@@ -1,8 +1,8 @@
 ---
 name: SmartCommand
-version: 2.0.0
+version: 2.1.0
 api: 2.0.0
-description: 'A framework for PocketMine'
+description: 'A advanced command framework for PocketMine'
 author: Rajador
 discord: rajadortv
 main: SmartCommand\Loader

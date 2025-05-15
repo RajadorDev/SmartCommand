@@ -27,7 +27,7 @@ use SmartCommand\command\rule\CommandSenderRule;
 class OnlyInGameCommandRule implements CommandSenderRule
 {
 
-    public function parse(CommandSender $sender, $command): bool
+    public function parse(CommandSender $sender, $command, int $executionType): bool
     {
         return $sender instanceof Player;
     }
@@ -35,6 +35,11 @@ class OnlyInGameCommandRule implements CommandSenderRule
     public function getMessage($command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::ONLY_PLAYER_ALLOWED);
+    }
+
+    public function getExecutionType(): int
+    {
+        return self::RULE_PRE_EXECUTION;
     }
     
 }

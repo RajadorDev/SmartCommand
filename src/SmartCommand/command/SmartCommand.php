@@ -26,6 +26,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\benchmark\SmartCommandBenchmark;
+use SmartCommand\command\rule\CommandSenderRule;
 use SmartCommand\command\rule\defaults\PermissionCommandRule;
 use SmartCommand\command\rule\RulesHolderTrait;
 use SmartCommand\command\subcommand\SubCommand;
@@ -49,8 +51,8 @@ abstract class SmartCommand extends Command
     /** @var string */
     private $prefix = '';
 
-    /** @var SubCommand[] */
-    protected $subCommands = [];
+    /** @var SmartCommandBenchmark */
+    private $executionBenchmark;
 
     /** @var CommandMessages */
     protected $messages;
@@ -64,6 +66,7 @@ abstract class SmartCommand extends Command
     public function __construct(string $name, string $description, string $usagePrefix = self::DEFAULT_USAGE_PREFIX, array $aliases = [], CommandMessages $messages = null)
     {
         parent::__construct($name, $description, $usagePrefix, $aliases);
+        $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
         $this->setPermission($this::getRuntimePermission());
         $this->registerRule(new PermissionCommandRule);
         $this->messages = $messages ?? DefaultMessages::ENGLISH();
@@ -92,8 +95,9 @@ abstract class SmartCommand extends Command
 
     final public function execute(CommandSender $sender, $commandLabel, array $args)
     {
+        $this->executionBenchmark->start();
         try {
-            if ($this->parseRules($sender))
+            if ($this->parseRules($sender, CommandSenderRule::RULE_PRE_EXECUTION))
             {
                 CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (isset($args[0]))
@@ -104,20 +108,20 @@ abstract class SmartCommand extends Command
                         {
                             if (isset($args[$indexNeedle]))
                             {
-                                if ($this->formatArguments($args, $sender, $this->getMessages()))
+                                if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
                                 {
                                     $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                                 }
                             } else {
                                 $this->sendUsage($sender, $commandLabel);
                             }
-                        } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
+                        } else if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
                             $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                         }
                     }
                 } else if (is_int($this->getArgNeedleIndex())) {
                     $this->sendUsage($sender, $commandLabel);
-                } else {
+                } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
                     $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                 }
             }
@@ -126,6 +130,12 @@ abstract class SmartCommand extends Command
             SmartCommandAPI::commandErrorLog($sender, $error, '/' . $commandLabel);
             $this->messages->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
+        $this->executionBenchmark->stop();
+    }
+
+    public function getExecutionBenchmark() : SmartCommandBenchmark
+    {
+        return $this->executionBenchmark;
     }
 
     protected function makeArguments(array $args) : CommandArguments
@@ -177,6 +187,14 @@ abstract class SmartCommand extends Command
             $list = array_slice($list, ($page == 1 ? 0 : (($page - 1) * $maxPerPage)), $maxPerPage);
         }
         return $list;
+    }
+
+    protected function executeSubCommand(CommandSender $sender, SubCommand $subCommand, string $commandLabel, string $subCommandLabel, array $args)
+    {
+        if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
+        {
+            $subCommand->execute($sender, $commandLabel, $subCommandLabel, $args);
+        }
     }
 
     /**
