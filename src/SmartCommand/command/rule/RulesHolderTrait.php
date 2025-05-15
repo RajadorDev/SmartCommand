@@ -24,12 +24,27 @@ use pocketmine\command\CommandSender;
 trait RulesHolderTrait
 {
 
-    /** @var CommandSenderRule[] */
+    /** @var array<int,CommandSenderRule[]> */
     private $rules = [];
 
     protected function registerRule(CommandSenderRule $rule)
     {
-        $this->rules[] = $rule;
+        $executionType = $rule->getExecutionType();
+        if ($executionType === CommandSenderRule::RULE_BOTH_EXECUTION)
+        {
+            foreach ([CommandSenderRule::RULE_EXECUTION, CommandSenderRule::RULE_PRE_EXECUTION] as $type)
+            {
+                if (!isset($this->rules[$type]))
+                {
+                    $this->rules[$type] = [];
+                }
+                $this->rules[$type][] = $rule;
+            }
+        } else if (isset($this->rules[$executionType])) {
+            $this->rules[$executionType][] = $rule;
+        } else {
+            $this->rules[$executionType] = [$rule];
+        }
     }
 
     /**
@@ -49,14 +64,17 @@ trait RulesHolderTrait
         return $this->rules;
     }
 
-    protected function parseRules(CommandSender $sender) : bool 
+    protected function parseRules(CommandSender $sender, int $executionType) : bool 
     {
-        foreach ($this->rules as $rule)
+        if (isset($this->rules[$executionType]))
         {
-            if (!$rule->parse($sender, $this))
+            foreach ($this->rules[$executionType] as $rule)
             {
-                $sender->sendMessage($rule->getMessage($this, $sender));
-                return false;
+                if (!$rule->parse($sender, $this, $executionType))
+                {
+                    $sender->sendMessage($rule->getMessage($this, $sender));
+                    return false;
+                }
             }
         }
         return true;

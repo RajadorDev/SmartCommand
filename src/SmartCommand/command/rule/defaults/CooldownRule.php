@@ -36,19 +36,21 @@ class CooldownRule implements CommandSenderRule
     protected $cooldownList = [];
 
     /** @var bool */
-    protected $ignoreConsole;
+    protected $ignoreConsole, $addToCooldownWhenExecuted;
 
     /** @var float|int */
     private $cooldownTime;
 
     /**
      * @param integer $ms The cooldown in mileseconds
+     * @param boolean $addToCooldownWhenExecuted If true will add to cooldown when the method onRun be executed
      * @param boolean $ignoreConsole If true, the command/subcommand cooldown will be ignored by console
      */
-    public function __construct(int $ms, bool $ignoreConsole = true)
+    public function __construct(int $ms, bool $addToCooldownWhenExecuted = true, bool $ignoreConsole = true)
     {
         $this->cooldownTime = $ms / 1000;
         $this->ignoreConsole = $ignoreConsole;
+        $this->addToCooldownWhenExecuted = $addToCooldownWhenExecuted;
     }
 
     public function addToCooldown(CommandSender $sender)
@@ -81,10 +83,19 @@ class CooldownRule implements CommandSenderRule
         unset($this->cooldownList[CommandUtils::hashSender($sender)]);
     }
 
-    public function parse(CommandSender $sender, $command): bool
+    public function parse(CommandSender $sender, $command, int $executionType): bool
     {
-        if (!$this->inCooldown($sender))
+        if ($executionType === CommandSenderRule::RULE_PRE_EXECUTION)
         {
+            if (!$this->inCooldown($sender))
+            {
+                if (!$this->addToCooldownWhenExecuted)
+                {
+                    $this->addToCooldown($sender);
+                }
+                return true;
+            }
+        } else if ($executionType === CommandSenderRule::RULE_EXECUTION) {
             $this->addToCooldown($sender);
             return true;
         }
@@ -99,6 +110,11 @@ class CooldownRule implements CommandSenderRule
     public static function secondsToMs(int $seconds) : int 
     {
         return $seconds * 1000;
+    }
+
+    public function getExecutionType(): int
+    {
+        return $this->addToCooldownWhenExecuted ? self::RULE_BOTH_EXECUTION : self::RULE_PRE_EXECUTION;
     }
 
 }

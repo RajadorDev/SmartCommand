@@ -42,6 +42,10 @@ interface CommandMessages
 
     const SENDER_IN_COOLDOWN = 'sender-cooldown';
 
+    const ARGUMENT_LONG = 'argument-too-long';
+
+    const ARGUMENT_SHORT = 'argument-too-short';
+
     /**
      * @param string $id
      * @return boolean

@@ -23,7 +23,10 @@ use pocketmine\plugin\PluginBase;
 use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\message\DefaultMessages;
 
-final class Loader extends PluginBase {
+final class Loader extends PluginBase 
+{
+
+    const PREFIX = '§e§lSMART§bCOMMAND§r§7  ';
 
     public function onEnable()
     {

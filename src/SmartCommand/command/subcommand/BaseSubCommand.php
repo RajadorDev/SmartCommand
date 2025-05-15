@@ -26,7 +26,9 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\CommandArguments;
+use SmartCommand\command\rule\CommandSenderRule;
 use SmartCommand\command\rule\defaults\PermissionCommandRule;
 use SmartCommand\command\rule\RulesHolderTrait;
 use SmartCommand\message\CommandMessages;
@@ -47,6 +49,9 @@ abstract class BaseSubCommand implements SubCommand
     /** @param SmartCommand */
     protected $command;
 
+    /** @var SmartCommandBenchmark */
+    private $executionBenchmark;
+
     /**
      * @param SmartCommand $command
      * @param string $name
@@ -61,6 +66,7 @@ abstract class BaseSubCommand implements SubCommand
         $this->description = $description;
         $this->aliases = $aliases;
         $this->permission = $this::getRuntimePermission();
+        $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
         $this->registerRule(new PermissionCommandRule);
         $this->prepare();
     }
@@ -118,22 +124,23 @@ abstract class BaseSubCommand implements SubCommand
 
     public function execute(CommandSender $sender, string $commandLabel, string $subCommandLabel, array $args)
     {
+        $this->executionBenchmark->start();
         try {
-            if ($this->parseRules($sender))
+            if ($this->parseRules($sender, CommandSenderRule::RULE_PRE_EXECUTION))
             {
                 CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (is_int($argsNeedle = $this->getArgNeedleIndex()))
                 {
                     if (isset($args[$argsNeedle]))
                     {
-                        if ($this->formatArguments($args, $sender, $this->getMessages()))
+                        if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
                         {
                             $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
                         }
                     } else {
                         $this->sendUsage($sender, $commandLabel, $subCommandLabel);
                     }
-                } else {
+                } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
                     $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
                 }
             }
@@ -143,6 +150,12 @@ abstract class BaseSubCommand implements SubCommand
             SmartCommandAPI::commandErrorLog($sender, $error, $format);
             $this->getMessages()->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
+        $this->executionBenchmark->stop();
+    }
+
+    public function getExecutionBenchmark() : SmartCommandBenchmark
+    {
+        return $this->executionBenchmark;
     }
 
     protected function makeArguments(array $args) : CommandArguments

@@ -126,12 +126,19 @@ trait SubCommandHolderTrait
                 $subCommandName = array_shift($args);
                 if ($subCommand = $this->fetchSubCommand($subCommandName))
                 {
-                    $subCommand->execute($sender, $label, $subCommandName, array_values($args));
+                    $this->executeSubCommand($sender, $subCommand, $label, $subCommandName, array_values($args));
                     return true;
                 }
             }
         }
         return false;
     }
+
+    /**
+     * @param CommandSender $sender
+     * @param SubCommand $subCommand
+     * @return void
+     */
+    abstract protected function executeSubCommand(CommandSender $sender, SubCommand $subCommand, string $commandLabel, string $subCommandLabel, array $args);
 
 }
