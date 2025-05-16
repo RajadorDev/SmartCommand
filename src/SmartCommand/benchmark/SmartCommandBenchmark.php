@@ -61,20 +61,18 @@ class SmartCommandBenchmark
      * @return void
      */
     public static function benchmarkColor(float $value, array $pallet = [
-        [
-            0.5 => TextFormat::GREEN,
-            1.0 => TextFormat::YELLOW,
-            2.0 => TextFormat::GOLD,
-            10.0 => TextFormat::RED
-        ]
+            [0.5, TextFormat::GREEN],
+            [1.0, TextFormat::YELLOW],
+            [1.5, TextFormat::GOLD],
+            [10.0, TextFormat::RED]
         ], string $default = TextFormat::DARK_RED) : string {
         foreach ($pallet as $values)
         {
-            foreach ($values as $numberMax => $color) {
-                if ($value < $numberMax)
-                {
-                    return $color;
-                }
+            $numberMax = $values[0];
+            if ($value < $numberMax)
+            {
+                $color = $values[1];
+                return $color;
             }
         }
         return $default;
