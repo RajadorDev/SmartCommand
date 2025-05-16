@@ -62,6 +62,10 @@ class StatusSubCommand extends BaseSubCommand
                     return $subCommand instanceof BaseSubCommand;
                 }
             );
+            if (count($subCommands) > 0)
+            {
+                $messageFormat .= "\n§8-    §bSubcommands: §f";
+            }
             /** @var BaseSubCommand[] $subCommands */
             foreach ($subCommands as $subCommand)
             {
