@@ -55,7 +55,7 @@ class StatusSubCommand extends BaseSubCommand
             {
                 continue;
             }
-            $messageFormat .= "\n" . $command->getExecutionBenchmark()->debugFormat() ."\n§8-  §7Uses: §f{$command->getExecutionBenchmark()->getBenchmarkTimes()}";
+            $messageFormat .= "\n" . $command->getExecutionBenchmark()->debugFormat() ."\n§8-    §7Uses: §f{$command->getExecutionBenchmark()->getBenchmarkTimes()}";
             $subCommands = array_filter(
                 $command->getSubCommands(),
                 static function (SubCommand $subCommand) : bool {
