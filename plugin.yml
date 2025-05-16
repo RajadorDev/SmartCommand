@@ -1,6 +1,6 @@
 ---
 name: SmartCommand
-version: 2.1.0
+version: 2.2.0
 api: 2.0.0
 description: 'A advanced command framework for PocketMine'
 author: Rajador

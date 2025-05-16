@@ -55,18 +55,22 @@ class StatusSubCommand extends BaseSubCommand
             {
                 continue;
             }
-            $messageFormat .= "\n" . $command->getExecutionBenchmark()->debugFormat() ."\n§8-  §7Uses: §f{$command->getExecutionBenchmark()->getBenchmarkTimes()}";
+            $messageFormat .= "\n" . $command->getExecutionBenchmark()->debugFormat() ."\n§8-    §7Uses: §f{$command->getExecutionBenchmark()->getBenchmarkTimes()}";
             $subCommands = array_filter(
                 $command->getSubCommands(),
                 static function (SubCommand $subCommand) : bool {
                     return $subCommand instanceof BaseSubCommand;
                 }
             );
+            if (count($subCommands) > 0)
+            {
+                $messageFormat .= "\n§8-    §bSubcommands: §f";
+            }
             /** @var BaseSubCommand[] $subCommands */
             foreach ($subCommands as $subCommand)
             {
                 $subCommandsCount++;
-                $messageFormat .= "\n" . $subCommand->getExecutionBenchmark()->debugFormat(2) . "\n§8-    §7Uses: §f" . $subCommand->getExecutionBenchmark()->getBenchmarkTimes();
+                $messageFormat .= "\n" . $subCommand->getExecutionBenchmark()->debugFormat(2) . "\n§8-      §7Uses: §f" . $subCommand->getExecutionBenchmark()->getBenchmarkTimes();
             }
             $commandsProcessed[] = $command;
         }

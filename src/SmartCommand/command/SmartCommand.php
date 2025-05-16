@@ -44,7 +44,7 @@ abstract class SmartCommand extends Command
 
     const PERMISSION_ROOT_ADMIN = 'administrator.command.use';
 
-    const DEFAULT_USAGE_PREFIX = " \n" . TextFormat::YELLOW . "§eUsage: \n";
+    const DEFAULT_USAGE_PREFIX = " \n" . TextFormat::YELLOW . "§eUsage: ";
 
     use ArgumentableTrait, SubCommandHolderTrait, RulesHolderTrait;
 
@@ -65,7 +65,7 @@ abstract class SmartCommand extends Command
      */
     public function __construct(string $name, string $description, string $usagePrefix = self::DEFAULT_USAGE_PREFIX, array $aliases = [], CommandMessages $messages = null)
     {
-        parent::__construct($name, $description, $usagePrefix, $aliases);
+        parent::__construct($name, $description, $usagePrefix . "\n", $aliases);
         $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
         $this->setPermission($this::getRuntimePermission());
         $this->registerRule(new PermissionCommandRule);

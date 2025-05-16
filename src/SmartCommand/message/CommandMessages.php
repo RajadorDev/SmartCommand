@@ -46,6 +46,8 @@ interface CommandMessages
 
     const ARGUMENT_SHORT = 'argument-too-short';
 
+    const INVALID_WORLD = 'invalid-world';
+
     /**
      * @param string $id
      * @return boolean
