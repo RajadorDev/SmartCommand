@@ -146,7 +146,7 @@ abstract class BaseSubCommand implements SubCommand
             }
         } catch (Throwable $error) {
             $format = "/{$commandLabel} {$subCommandLabel}";
-            Server::getInstance()->getLogger()->error("Command execution error, {$sender->getName()} used: \"{$format}...\" ");
+            Server::getInstance()->getLogger()->error("Command execution error, {$sender->getName()} used: \"{$format}...\": " . ((string) $error));
             SmartCommandAPI::commandErrorLog($sender, $error, $format);
             $this->getMessages()->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
