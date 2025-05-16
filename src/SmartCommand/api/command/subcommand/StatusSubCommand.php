@@ -66,7 +66,7 @@ class StatusSubCommand extends BaseSubCommand
             foreach ($subCommands as $subCommand)
             {
                 $subCommandsCount++;
-                $messageFormat .= "\n" . $subCommand->getExecutionBenchmark()->debugFormat(2) . "\n§8-    §7Uses: §f" . $subCommand->getExecutionBenchmark()->getBenchmarkTimes();
+                $messageFormat .= "\n" . $subCommand->getExecutionBenchmark()->debugFormat(2) . "\n§8-      §7Uses: §f" . $subCommand->getExecutionBenchmark()->getBenchmarkTimes();
             }
             $commandsProcessed[] = $command;
         }
