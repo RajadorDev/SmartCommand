@@ -20,6 +20,7 @@ declare (strict_types=1);
 namespace SmartCommand\command;
 
 use Exception;
+use pocketmine\level\Level;
 use pocketmine\Player;
 use SmartCommand\utils\CommandUtils;
 
@@ -114,6 +115,16 @@ class CommandArguments
      * @return float
      */
     public function getFloat(string $argumentName) : float
+    {
+        return $this->getValue($argumentName);
+    }
+
+    /**
+     * @see SmartCommand\command\argument\WorldArgument
+     * @param string $argumentName
+     * @return Level
+     */
+    public function getWorld(string $argumentName) : Level 
     {
         return $this->getValue($argumentName);
     }
