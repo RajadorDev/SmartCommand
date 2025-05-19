@@ -1,0 +1,23 @@
+{
+    "name": "rajadordev/smartcommand",
+    "description": "A advanced command framework for PocketMine",
+    "autoload": {
+        "classmap": ["src"]
+    },
+    "authors": [
+        {
+            "name": "RajadorDev",
+            "email": "rajadordeveloper@gmail.com"
+        }
+    ],
+    "require": {
+        "pocketmine/pocketmine-mp": "^5.0.0", 
+        "php": "^8.1"
+    },
+    "extra": {
+        "virion": {
+            "spec": "3.1",
+            "namespace-root": "rajadordev\\smartcommand"
+        }
+    }
+}

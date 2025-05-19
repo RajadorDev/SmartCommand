@@ -9,7 +9,7 @@ SmartCommand is a mini **framework for PocketMine**. With SmartCommand, you can 
 
 ## Installation
 
-First, install the `phar` file from [here](https://github.com/RajadorDev/SmartCommand/releases).
+First, install the `phar` file from [here](https://github.com/rajadordev/SmartCommand/releases).
 
 Put the `phar` file in your PocketMine server inside the `plugins/` folder.
 
@@ -22,23 +22,23 @@ depend: SmartCommand
 
 ## Creating a new command
 
-You can create a new command using the abstract class `SmartCommand\command\SmartCommand`:
+You can create a new command using the abstract class `rajadordev\SmartCommand\command\SmartCommand`:
 
 ```php
 use pocketmine\Server;
 use pocketmine\command\CommandSender;
-use SmartCommand\command\SmartCommand;
-use SmartCommand\command\argument\TextArgument;
-use SmartCommand\command\CommandArguments;
+use rajadordev\SmartCommand\command\SmartCommand;
+use rajadordev\SmartCommand\command\argument\TextArgument;
+use rajadordev\SmartCommand\command\CommandArguments;
 
 class SayCommand extends SmartCommand
 {
     /**
      * The command permission will be registered automatically by the SmartCommand constructor
      *
-     * @see SmartCommand\utils\AdminPermissionTrait
-     * @see SmartCommand\utils\MemberPermissionTrait
-     * @see SmartCommand\command\rule\defaults\PermissionCommandRule
+     * @see rajadordev\SmartCommand\utils\AdminPermissionTrait
+     * @see rajadordev\SmartCommand\utils\MemberPermissionTrait
+     * @see rajadordev\SmartCommand\command\rule\defaults\PermissionCommandRule
      * @return string
      */
     protected static function getRuntimePermission(): string
@@ -49,9 +49,9 @@ class SayCommand extends SmartCommand
     /**
      * This method will be called inside __construct. Here you can register every SubCommand, Argument, and CommandSenderRule.
      *
-     * @see SmartCommand\command\subcommand\SubCommand
-     * @see SmartCommand\command\rule\CommandSenderRule
-     * @see SmartCommand\command\argument\Argument
+     * @see rajadordev\SmartCommand\command\subcommand\SubCommand
+     * @see rajadordev\SmartCommand\command\rule\CommandSenderRule
+     * @see rajadordev\SmartCommand\command\argument\Argument
      * @return void
      */
     protected function prepare()
@@ -89,11 +89,11 @@ You can create and use the default arguments. They will be validated and convert
 
 Example:
 ```php
-use SmartCommand\command\SmartCommand;
-use SmartCommand\command\argument\BoolArgument;
-use SmartCommand\command\argument\StringArgument;
-use SmartCommand\command\argument\IntegerArgument;
-use SmartCommand\command\CommandArguments;
+use rajadordev\SmartCommand\command\SmartCommand;
+use rajadordev\SmartCommand\command\argument\BoolArgument;
+use rajadordev\SmartCommand\command\argument\StringArgument;
+use rajadordev\SmartCommand\command\argument\IntegerArgument;
+use rajadordev\SmartCommand\command\CommandArguments;
 
 protected function prepare()
 {
@@ -115,27 +115,27 @@ protected function onRun(CommandSender $sender, string $label, CommandArguments 
 
 List of default arguments:
 ```php
-use SmartCommand\command\argument\BoolArgument;
-use SmartCommand\command\argument\FloatArgument;
-use SmartCommand\command\argument\IntegerArgument;
-use SmartCommand\command\argument\StringArgument;
+use rajadordev\SmartCommand\command\argument\BoolArgument;
+use rajadordev\SmartCommand\command\argument\FloatArgument;
+use rajadordev\SmartCommand\command\argument\IntegerArgument;
+use rajadordev\SmartCommand\command\argument\StringArgument;
 // Will search the Player instance by the provided name
-use SmartCommand\command\argument\PlayerArgument;
+use rajadordev\SmartCommand\command\argument\PlayerArgument;
 // You can't register another argument after this one
-use SmartCommand\command\argument\TextArgument;
+use rajadordev\SmartCommand\command\argument\TextArgument;
 ```
 
 ### SenderRules
 
 The rules will be checked **before** `arguments`, `subcommands`, and `onRun` are processed.
 
-By default, SmartCommand automatically registers `\SmartCommand\rule\PermissionCommandRule` (in the constructor).
+By default, SmartCommand automatically registers `\rajadordev\SmartCommand\rule\PermissionCommandRule` (in the constructor).
 
 You can create your own `CommandSenderRule` to use across multiple commands in your plugin, like:
 
 ```php
 use pocketmine\command\CommandSender;
-use SmartCommand\command\rule\CommandSenderRule;
+use rajadordev\SmartCommand\command\rule\CommandSenderRule;
 
 class OnlyLowercaseName implements CommandSenderRule
 {
@@ -149,7 +149,7 @@ class OnlyLowercaseName implements CommandSenderRule
 
     /**
      * Return the message shown when the rule fails
-     * @see SmartCommand\message\CommandMessages
+     * @see rajadordev\SmartCommand\message\CommandMessages
      */
     public function getMessage($command, CommandSender $sender): string
     {
@@ -171,27 +171,27 @@ Default rules:
 
 ```php
 /** Command can only be executed from the console */
-use SmartCommand\command\rule\defaults\OnlyConsoleCommandRule;
+use rajadordev\SmartCommand\command\rule\defaults\OnlyConsoleCommandRule;
 /** Only players can execute the command */
-use SmartCommand\command\rule\defaults\OnlyInGameCommandRule;
+use rajadordev\SmartCommand\command\rule\defaults\OnlyInGameCommandRule;
 /** @internal Automatically used by SmartCommand and BaseSubCommand */
-use SmartCommand\command\rule\defaults\PermissionCommandRule;
+use rajadordev\SmartCommand\command\rule\defaults\PermissionCommandRule;
 /** Adds a cooldown (in milliseconds) before the command or subcommand can be used again */
-use SmartCommand\command\rule\defaults\CooldownRule;
+use rajadordev\SmartCommand\command\rule\defaults\CooldownRule;
 ```
 
 ## SubCommand
 
-You can create subcommands with arguments and rules the same way as `SmartCommand\command\SmartCommand`:
+You can create subcommands with arguments and rules the same way as `rajadordev\SmartCommand\command\SmartCommand`:
 
 **Example:**
 
 ```php
 use pocketmine\Server;
 use pocketmine\command\CommandSender;
-use SmartCommand\command\argument\TextArgument;
-use SmartCommand\command\CommandArguments;
-use SmartCommand\command\subcommand\BaseSubCommand;
+use rajadordev\SmartCommand\command\argument\TextArgument;
+use rajadordev\SmartCommand\command\CommandArguments;
+use rajadordev\SmartCommand\command\subcommand\BaseSubCommand;
 
 class PopupSubCommand extends BaseSubCommand
 {
