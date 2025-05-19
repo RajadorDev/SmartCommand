@@ -20,11 +20,10 @@ declare (strict_types=1);
 namespace rajadordev\smartcommand\api;
 
 use Throwable;
+use RuntimeException;
 use pocketmine\Server;
-use rajadordev\smartcommand\Loader;
+use pocketmine\plugin\Plugin;
 use pocketmine\command\CommandSender;
-use rajadordev\smartcommand\command\SmartCommand;
-use rajadordev\smartcommand\api\command\FrameworkCommand;
 use rajadordev\smartcommand\message\DefaultMessages;
 
 final class SmartCommandAPI
@@ -40,6 +39,9 @@ final class SmartCommandAPI
     /** @var array{version:string,author:string,github:string,discord:string,api:string} */
     private static array $frameworkDescription;
 
+    /** @var Plugin */
+    private static ?Plugin $registeredBy = null;
+
     /** @return array{version:string,author:string,github:string,discord:string,api:string} */
     public static function getFrameworkDescription() : array 
     {
@@ -47,10 +49,36 @@ final class SmartCommandAPI
     }
 
     /**
+     * @internal used by SmartCommand and SubCommands 
      * @return void
      */
-    public static function init() : void
+    public static function checkIfRegistered() : void 
     {
+        if (is_null(self::$registeredBy))
+        {
+            throw new RuntimeException("SmartCommand is not registered yet");
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function isRegistered() : bool 
+    {
+        return self::$registeredBy instanceof Plugin;
+    }
+
+    /**
+     * @param Plugin $plugin
+     * @return void
+     */
+    public static function register(Plugin $plugin) : void
+    {
+        if (self::$registeredBy)
+        {
+            throw new RuntimeException('SmartCommand is already registered');
+        }
+        self::$registeredBy = $plugin;
         $folder = self::getFrameworkFolder();
         self::$commandErrorFolder = $folder . DIRECTORY_SEPARATOR . 'error' . DIRECTORY_SEPARATOR;
         if (!file_exists(self::$commandErrorFolder))
@@ -116,26 +144,6 @@ final class SmartCommandAPI
             ]
         ];
         DefaultMessages::init($folder . 'messages' . DIRECTORY_SEPARATOR, $defaultMessagesList);
-    }
-
-    /**
-     * @param string $prefix
-     * @param SmartCommand $command
-     * @return void
-     */
-    public static function register(string $prefix, SmartCommand $command) : void
-    {
-        Server::getInstance()->getCommandMap()->register($prefix, $command);
-    }
-
-    /**
-     * @param string $prefix
-     * @param SmartCommand[] $commands
-     * @return void
-     */
-    public static function registerCommands(string $prefix, array $commands) : void
-    {
-        Server::getInstance()->getCommandMap()->registerAll($prefix, $commands);
     }
 
     /**

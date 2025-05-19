@@ -61,6 +61,7 @@ abstract class BaseSubCommand implements SubCommand
      */
     public function __construct(SmartCommand $command, string $name, string $description, array $aliases = [])
     {
+        SmartCommandAPI::checkIfRegistered();
         $this->command = $command;
         $this->name = $name;
         $this->description = $description;

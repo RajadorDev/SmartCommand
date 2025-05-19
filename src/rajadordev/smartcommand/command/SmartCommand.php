@@ -72,6 +72,7 @@ abstract class SmartCommand extends Command implements PluginOwned
     public function __construct(Plugin $plugin, string $name, string $description, string $usagePrefix = self::DEFAULT_USAGE_PREFIX, array $aliases = [], CommandMessages $messages = null)
     {
         $this->plugin = $plugin;
+        SmartCommandAPI::checkIfRegistered();
         parent::__construct($name, $description, $usagePrefix . "\n", $aliases);
         $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
         $this->setPermission($this::getRuntimePermission());
