@@ -9,18 +9,7 @@ SmartCommand is a mini **framework for PocketMine**. With SmartCommand, you can 
 
 ## Installation
 
-First, install the `phar` file from [here](https://github.com/rajadordev/SmartCommand/releases).
-
-Put the `phar` file in your PocketMine server inside the `plugins/` folder.
-
-Set it as your plugin dependency in:
-`YourPlugin/plugin.yml`
-
-```yml
-depend: SmartCommand
-```
-
-**Now you need to init SmartCommand lib (if not registered yet)**
+**You need to init SmartCommand lib (if not registered yet)**
 ```php
 
 use rajadordev\smartcommand\api\SmartCommandAPI;
