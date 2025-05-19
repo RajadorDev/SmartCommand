@@ -97,11 +97,11 @@ use rajadordev\SmartCommand\command\CommandArguments;
 
 protected function prepare()
 {
-    $this->registerArguments([
+    $this->registerArguments(
         new IntegerArgument('amount'),
         new StringArgument('target'),
         new BoolArgument('warn_player')
-    ]);
+    );
 }
 
 protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
