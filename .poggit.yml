@@ -1,0 +1,9 @@
+--- 
+branches:
+- master
+projects:
+  SmartCommand:
+    path: ""
+    model: virion
+    type: library
+...
