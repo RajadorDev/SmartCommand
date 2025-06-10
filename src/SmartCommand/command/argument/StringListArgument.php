@@ -32,7 +32,7 @@ class StringListArgument extends BaseArgument
      */
     public function __construct(string $name, array $list, bool $required = true)
     {
-        parent::__construct($name, implode('§7|§f', $list), $required, function (string &$given) : bool {
+        parent::__construct($name, implode('|', $list), $required, function (string &$given) : bool {
             if (in_array(strtolower($given), $this->list))
             {
                 $given = strtotime($given);

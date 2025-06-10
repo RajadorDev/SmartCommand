@@ -6,9 +6,10 @@
     "no-allowed": "§cVocê não tem permissão para usar este comando",
     "in-game-command": "§cVocê só pode usar este comando dentro do jogo!",
     "in-console-command": "§cVocê só pode usar este comando no console!",
-    "usage-line": "§8-  §f{usage}",
     "sender-cooldown": "§cDigite o comando novamente em §f{cooldown}§7s§c!",
     "invalid-world": "§cMapa §f{name} §cnão encontrado!",
+    "invalid-item": "§cItem §f{given} §cnão é um item valido!",
+    "usage-line": "§8-  §f{usage}",
     "arguments": {
         "bool": "bool",
         "number": "numero",

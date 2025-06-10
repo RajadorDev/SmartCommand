@@ -48,6 +48,8 @@ interface CommandMessages
 
     const INVALID_WORLD = 'invalid-world';
 
+    const INVALID_ITEM = 'invalid-item';
+
     /**
      * @param string $id
      * @return boolean
