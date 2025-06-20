@@ -169,6 +169,7 @@ class SmartCommandBenchmark implements Stringable
         if (!is_null($this->started))
         {
             $time = $now - $this->started;
+            $time *= 1000;
             $this->addTime($time);
             $this->started = null;
             $this->benchmarkTimes++;
@@ -193,9 +194,9 @@ class SmartCommandBenchmark implements Stringable
         return CommandUtils::textLinesWithPrefix(
             [
                 "{$identation}{$this->name} {$this->getCommandFormat()}",
-                $identation . '  §7Highest time: §f' . $this->getHighestTimeFormatted() . 's',
-                $identation . '  §7Average time: §f' . $this->getAverageFormatted() . 's',
-                $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 's',
+                $identation . '  §7Highest time: §f' . $this->getHighestTimeFormatted() . 'ms',
+                $identation . '  §7Average time: §f' . $this->getAverageFormatted() . 'ms',
+                $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 'ms',
                 $identation . '  §7Average count: §f' . count($this->average) . ' times'
             ]
         );
