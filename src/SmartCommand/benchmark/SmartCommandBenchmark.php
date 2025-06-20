@@ -46,7 +46,7 @@ class SmartCommandBenchmark
     private $started = null;
 
     /** @var int */
-    private $benchmarkTimes = 0;
+    private $benchmarkTimes = 0, $violations = 0;
 
     public function __construct(string $name, $command)
     {
@@ -112,8 +112,18 @@ class SmartCommandBenchmark
 
     public function getAverageFormatted() : string 
     {
-        $average = $this->getAverage();
+        $average = $this->getAverage() * 1000;
         return self::benchmarkColor($average) . number_format($average, 2);
+    }
+
+    public function getViolations() : int 
+    {
+        return $this->violations;
+    }
+
+    public function getViolationsFormatted() : string 
+    {
+        return $this->violations > 0 ? (TextFormat::RED . $this->violations) : (TextFormat::GREEN . '0');
     }
 
     public function getLastTime() : float 
@@ -123,7 +133,7 @@ class SmartCommandBenchmark
 
     public function getLastTimeFormatted() : string 
     {
-        $lastTime = $this->getLastTime();
+        $lastTime = $this->getLastTime() * 1000;
         return self::benchmarkColor($lastTime) . number_format($lastTime, 2);
     }
 
@@ -134,13 +144,17 @@ class SmartCommandBenchmark
 
     public function getHighestTimeFormatted() : string 
     {
-        $time = $this->getHighestTime();
+        $time = $this->getHighestTime() * 1000;
         return self::benchmarkColor($time) . number_format($time, 2);
     }
 
     protected function addTime(float $time)
     {
         $this->lastTime = $time;
+        if ($time > 0.05)
+        {
+            $this->violations++;
+        }
         if ($time > $this->highestTime)
         {
             $this->highestTime = $time;
@@ -193,10 +207,11 @@ class SmartCommandBenchmark
         return CommandUtils::textLinesWithPrefix(
             [
                 "{$identation}{$this->name} {$this->getCommandFormat()}",
-                $identation . '  §7Highest time: §f' . $this->getHighestTimeFormatted() . 's',
-                $identation . '  §7Average time: §f' . $this->getAverageFormatted() . 's',
-                $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 's',
-                $identation . '  §7Average count: §f' . count($this->average) . ' times'
+                $identation . '  §7Highest time: §f' . $this->getHighestTimeFormatted() . 'ms',
+                $identation . '  §7Average time: §f' . $this->getAverageFormatted() . 'ms',
+                $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 'ms',
+                $identation . '  §7Average count: §f' . count($this->average) . ' times',
+                $identation . '  §7Violations: §f' . $this->getViolationsFormatted()
             ]
         );
     }
