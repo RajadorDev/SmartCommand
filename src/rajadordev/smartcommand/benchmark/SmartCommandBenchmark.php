@@ -47,7 +47,7 @@ class SmartCommandBenchmark implements Stringable
     private ?float $started = null;
 
     /** @var int */
-    private int $benchmarkTimes = 0;
+    private int $benchmarkTimes = 0, $violations = 0;
 
     public function __construct(string $name, SmartCommand|SubCommand $command)
     {
@@ -110,9 +110,19 @@ class SmartCommandBenchmark implements Stringable
         return 0.0;
     }
 
+    public function getViolations() : int 
+    {
+        return $this->violations;
+    }
+
+    public function getViolationsFormatted() : string 
+    {
+        return $this->violations > 0 ? (TextFormat::RED . $this->violations) : (TextFormat::GREEN . '0');
+    }
+
     public function getAverageFormatted() : string 
     {
-        $average = $this->getAverage();
+        $average = $this->getAverage() * 1000;
         return self::benchmarkColor($average) . number_format($average, 2);
     }
 
@@ -123,7 +133,7 @@ class SmartCommandBenchmark implements Stringable
 
     public function getLastTimeFormatted() : string 
     {
-        $lastTime = $this->getLastTime();
+        $lastTime = $this->getLastTime() * 1000;
         return self::benchmarkColor($lastTime) . number_format($lastTime, 2);
     }
 
@@ -134,7 +144,7 @@ class SmartCommandBenchmark implements Stringable
 
     public function getHighestTimeFormatted() : string 
     {
-        $time = $this->getHighestTime();
+        $time = $this->getHighestTime() * 1000;
         return self::benchmarkColor($time) . number_format($time, 2);
     }
 
@@ -150,6 +160,10 @@ class SmartCommandBenchmark implements Stringable
             array_shift($this->average);
         }
         $this->average[] = $time;
+        if ($time > 0.05)
+        {
+            $this->violations++;
+        }
     }
 
     public function clearAverage() : void 
@@ -169,7 +183,6 @@ class SmartCommandBenchmark implements Stringable
         if (!is_null($this->started))
         {
             $time = $now - $this->started;
-            $time *= 1000;
             $this->addTime($time);
             $this->started = null;
             $this->benchmarkTimes++;
@@ -197,7 +210,8 @@ class SmartCommandBenchmark implements Stringable
                 $identation . '  §7Highest time: §f' . $this->getHighestTimeFormatted() . 'ms',
                 $identation . '  §7Average time: §f' . $this->getAverageFormatted() . 'ms',
                 $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 'ms',
-                $identation . '  §7Average count: §f' . count($this->average) . ' times'
+                $identation . '  §7Average count: §f' . count($this->average) . ' times',
+                $identation . '  §7Violations: §f' . $this->violations
             ]
         );
     }
