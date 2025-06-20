@@ -28,7 +28,7 @@ class BaseArgument implements Argument
     protected string $name, $typeName;
 
     /** @var callable */
-    protected callable $validCallback;
+    protected $validCallback;
 
     /** @var bool */
     protected bool $required;
