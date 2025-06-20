@@ -221,7 +221,7 @@ abstract class SmartCommand extends Command implements PluginOwned
     /**
      * @return string
      */
-    abstract protected static function getRuntimePermission() : string;
+    abstract protected function getRuntimePermission() : string;
 
     /**
      * Called when the command sender is 

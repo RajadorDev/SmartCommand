@@ -174,7 +174,7 @@ abstract class BaseSubCommand implements SubCommand
      *
      * @return string
      */
-    abstract protected static function getRuntimePermission() : string;
+    abstract protected function getRuntimePermission() : string;
 
     /**
      * Called after __construct
