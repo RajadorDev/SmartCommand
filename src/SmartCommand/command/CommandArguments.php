@@ -20,6 +20,7 @@ declare (strict_types=1);
 namespace SmartCommand\command;
 
 use Exception;
+use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\Player;
 use SmartCommand\utils\CommandUtils;
@@ -125,6 +126,16 @@ class CommandArguments
      * @return Level
      */
     public function getWorld(string $argumentName) : Level 
+    {
+        return $this->getValue($argumentName);
+    }
+
+    /**
+     * @see SmartCommand\command\argument\ItemArgument
+     * @param string $argumentName
+     * @return Item
+     */
+    public function getItem(string $argumentName) : Item
     {
         return $this->getValue($argumentName);
     }
