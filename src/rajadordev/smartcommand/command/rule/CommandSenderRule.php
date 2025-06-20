@@ -47,7 +47,7 @@ interface CommandSenderRule
      * @param SmartCommand|SubCommand $command
      * @return string
      */
-    public function getMessage($command, CommandSender $sender) : string;
+    public function getMessage(SmartCommand|SubCommand $command, CommandSender $sender) : string;
 
     /**
      * @return int

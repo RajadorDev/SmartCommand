@@ -22,6 +22,8 @@ namespace rajadordev\smartcommand\command\rule\defaults;
 use pocketmine\command\CommandSender;
 use rajadordev\smartcommand\message\CommandMessages;
 use rajadordev\smartcommand\command\rule\CommandSenderRule;
+use rajadordev\smartcommand\command\SmartCommand;
+use rajadordev\smartcommand\command\subcommand\SubCommand;
 
 class PermissionCommandRule implements CommandSenderRule
 {
@@ -31,7 +33,7 @@ class PermissionCommandRule implements CommandSenderRule
         return $sender->hasPermission($command->getPermission());
     }
 
-    public function getMessage($command, CommandSender $sender): string
+    public function getMessage(SmartCommand|SubCommand $command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::NOT_ALLOWED);
     }

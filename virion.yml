@@ -2,7 +2,7 @@
 name: SmartCommand
 version: 3.0.0
 authors: [Rajador]
-description: 'PocketMine framework to create new commands'
+description: 'PocketMine framework to create advanced or simple commands'
 antigen: rajadordev\smartcommand
 api: [5.0.0]
 ...

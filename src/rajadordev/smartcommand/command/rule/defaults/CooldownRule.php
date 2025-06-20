@@ -24,6 +24,8 @@ use pocketmine\command\CommandSender;
 use rajadordev\smartcommand\message\CommandMessages;
 use rajadordev\smartcommand\command\rule\CommandSenderRule;
 use pocketmine\player\Player;
+use rajadordev\smartcommand\command\SmartCommand;
+use rajadordev\smartcommand\command\subcommand\SubCommand;
 
 /**
  * I recommend that you register this rule as the last
@@ -103,7 +105,7 @@ class CooldownRule implements CommandSenderRule
         return false;
     }
 
-    public function getMessage($command, CommandSender $sender): string
+    public function getMessage(SmartCommand|SubCommand $command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::SENDER_IN_COOLDOWN, '{cooldown}', number_format($this->getCooldownTime($sender) - microtime(true), 2));
     }

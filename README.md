@@ -53,7 +53,7 @@ class SayCommand extends SmartCommand
      * @see rajadordev\smartcommand\command\argument\Argument
      * @return void
      */
-    protected function prepare()
+    protected function prepare() : void
     {
         /**
          * Arguments are optional to be registered.
@@ -72,7 +72,7 @@ class SayCommand extends SmartCommand
     }
 
     /** This method will be called after all rules, arguments, and SubCommands have been processed */
-    protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
+    protected function onRun(CommandSender $sender, string $label, CommandArguments $args) : void
     {
         /** Access the argument directly without checking its existence :) */
         $message = $args->getString('message');
@@ -94,7 +94,7 @@ use rajadordev\smartcommand\command\argument\StringArgument;
 use rajadordev\smartcommand\command\argument\IntegerArgument;
 use rajadordev\smartcommand\command\CommandArguments;
 
-protected function prepare()
+protected function prepare() : void
 {
     $this->registerArguments(
         new IntegerArgument('amount'),
@@ -103,7 +103,7 @@ protected function prepare()
     );
 }
 
-protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
+protected function onRun(CommandSender $sender, string $label, CommandArguments $args) : void
 {
     /** If all arguments are valid, they will be converted to their correct types: **/
     var_dump($args->getInteger('amount')); // integer
@@ -160,7 +160,7 @@ class OnlyLowercaseName implements CommandSenderRule
 Then register it like this:
 
 ```php
-protected function prepare()
+protected function prepare() : void
 {
     $this->registerRule(new OnlyLowercaseName);
 }
@@ -199,13 +199,13 @@ class PopupSubCommand extends BaseSubCommand
         return 'subcommand.permission';
     }
 
-    protected function prepare()
+    protected function prepare() : void
     {
         /** You can register arguments the same way as in SmartCommand **/
         $this->registerArgument(0, new TextArgument('text'));
     }
 
-    protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args)
+    protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args) : void
     {
         $text = $args->getString('text');
         Server::getInstance()->broadcastPopup($text);

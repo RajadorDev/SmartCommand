@@ -23,6 +23,8 @@ use pocketmine\command\CommandSender;
 use rajadordev\smartcommand\message\CommandMessages;
 use rajadordev\smartcommand\command\rule\CommandSenderRule;
 use pocketmine\player\Player;
+use rajadordev\smartcommand\command\SmartCommand;
+use rajadordev\smartcommand\command\subcommand\SubCommand;
 
 class OnlyConsoleCommandRule implements CommandSenderRule 
 {
@@ -32,7 +34,7 @@ class OnlyConsoleCommandRule implements CommandSenderRule
         return !($sender instanceof Player);
     }
 
-    public function getMessage($command, CommandSender $sender): string
+    public function getMessage(SmartCommand|SubCommand $command, CommandSender $sender): string
     {
         return $command->getMessages()->get(CommandMessages::ONLY_CONSOLE_ALLOWED);
     }

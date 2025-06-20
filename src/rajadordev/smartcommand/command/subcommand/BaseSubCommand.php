@@ -184,8 +184,6 @@ abstract class BaseSubCommand implements SubCommand
     abstract protected function prepare() : void;
 
     /**
-     * Undocumented function
-     *
      * @param CommandSender|Player $sender
      * @param string $commandLabel
      * @param string $subcommandLabel
