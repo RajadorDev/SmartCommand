@@ -24,7 +24,7 @@ use rajadordev\smartcommand\command\SmartCommand;
 trait MemberPermissionTrait
 {
 
-    protected static function getRuntimePermission() : string 
+    protected function getRuntimePermission() : string 
     {
         return SmartCommand::PERMISSION_MEMBER;
     }
