@@ -26,7 +26,7 @@ use rajadordev\smartcommand\command\SmartCommand;
 use rajadordev\smartcommand\command\subcommand\SubCommand;
 
 /**
- * Will be used only for SubCommands now (in pmmp 3)
+ * Will be used only for SubCommands now (in pmmp 5)
  */
 class PermissionCommandRule implements CommandSenderRule
 {
