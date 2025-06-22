@@ -75,8 +75,7 @@ abstract class SmartCommand extends Command implements PluginOwned
         SmartCommandAPI::checkIfRegistered();
         parent::__construct($name, $description, $usagePrefix . "\n", $aliases);
         $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
-        $this->setPermission($this::getRuntimePermission());
-        $this->registerRule(new PermissionCommandRule);
+        $this->setPermission($this->getRuntimePermission());
         $this->messages = $messages ?? DefaultMessages::ENGLISH();
         $this->prepare();
     }
@@ -209,6 +208,16 @@ abstract class SmartCommand extends Command implements PluginOwned
             $subCommand->execute($sender, $commandLabel, $subCommandLabel, $args);
             return true;
         }
+        return false;
+    }
+
+    public function testPermission(CommandSender $target, ?string $permission = null): bool
+    {
+        if ($this->testPermissionSilent($target, $permission))
+        {
+            return true;
+        }
+        $target->sendMessage($this->messages->get(CommandMessages::NOT_ALLOWED));
         return false;
     }
 
