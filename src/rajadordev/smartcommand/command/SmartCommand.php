@@ -20,7 +20,7 @@ declare (strict_types=1);
 namespace rajadordev\smartcommand\command;
 
 use Throwable;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\plugin\Plugin;
 use pocketmine\command\Command;
