@@ -81,9 +81,13 @@ final class SmartCommandAPI
         self::$registeredBy = $plugin;
         $folder = self::getFrameworkFolder();
         self::$commandErrorFolder = $folder . DIRECTORY_SEPARATOR . 'error' . DIRECTORY_SEPARATOR;
-        if (!file_exists(self::$commandErrorFolder))
+        $messagesFolder = $folder . DIRECTORY_SEPARATOR . 'messages' . DIRECTORY_SEPARATOR;
+        foreach ([$folder, self::$commandErrorFolder, $messagesFolder] as $systemFolder)
         {
-            mkdir(self::$commandErrorFolder);
+            if (!file_exists($systemFolder))
+            {
+                mkdir($systemFolder);
+            }
         }
         self::$commandErrorFile = self::$commandErrorFolder . 'errors.log';
         self::$frameworkDescription = [

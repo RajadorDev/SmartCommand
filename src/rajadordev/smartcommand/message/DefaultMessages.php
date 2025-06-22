@@ -21,7 +21,6 @@ namespace rajadordev\smartcommand\message;
 
 use Exception;
 use InvalidArgumentException;
-use pocketmine\plugin\PluginLogger;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use rajadordev\smartcommand\message\CommandMessages;
@@ -45,13 +44,12 @@ final class DefaultMessages
                 $fileName = $messagesData['file'];
                 $messages = $messagesData['data'];
                 $filePath = $dir . $fileName;
-                if (file_exists($filePath))
+                if (!file_exists($filePath))
                 {
-                    self::$messages[strtoupper($name)] = BaseCommandMessages::messagesFromFile($filePath, '', Config::JSON, $messages);
-                    Server::getInstance()->getLogger()->debug("Default messages $name registered suceffully from $filePath");
-                } else {
-                    throw new Exception("File $filePath not found");
+                    file_put_contents($filePath, json_encode($messages));
                 }
+                self::$messages[strtoupper($name)] = BaseCommandMessages::messagesFromFile($filePath, '', Config::JSON, $messages);
+                Server::getInstance()->getLogger()->debug("Default messages $name registered suceffully from $filePath");
             }
         } else {
             throw new Exception("Default messages already registered");
