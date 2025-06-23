@@ -21,14 +21,11 @@ namespace rajadordev\smartcommand\command\argument;
 
 use rajadordev\smartcommand\message\CommandMessages;
 
-class BaseArgument implements Argument
+abstract class BaseArgument implements Argument
 {
 
     /** @var string */
     protected string $name, $typeName;
-
-    /** @var callable */
-    protected $validCallback;
 
     /** @var bool */
     protected bool $required;
@@ -36,14 +33,12 @@ class BaseArgument implements Argument
     /**
      * @param string $name
      * @param string $typeName
-     * @param callable $validator `(string &$given) : bool` Returns true if the value is valid, you can transform the value to int by example
      */
-    public function __construct(string $name, string $typeName, bool $required, callable $validator)
+    public function __construct(string $name, string $typeName, bool $required)
     {
         $this->name = $name;
         $this->typeName = $typeName;
         $this->required = $required;
-        $this->validCallback = $validator;
     }
 
     public function getName(): string
@@ -54,11 +49,6 @@ class BaseArgument implements Argument
     public function getTypeName(): string
     {
         return $this->typeName;
-    }
-
-    public function parse(string &$given): bool
-    {
-        return ($this->validCallback)($given);
     }
 
     public function isRequired() : bool 

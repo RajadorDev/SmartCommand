@@ -27,19 +27,23 @@ class FloatArgument extends BaseArgument
      * @param boolean $required
      * @param boolean $strict If true, will not convert integers to float
      */
-    public function __construct(string $name, bool $required = true, bool $strict = false)
+    public function __construct(string $name, bool $required = true, protected readonly bool $strict)
     {
-        parent::__construct($name, 'float', $required, static function (string &$given) use ($strict) : bool {
-            if (is_numeric($given))
-            {
-                if (strpos($given, '.') === false && $strict)
-                {
-                    return false;
-                }
-                $given = (float) $given;
-                return true;
-            }
-            return false;
-        });
+        parent::__construct($name, 'float', $required);
     }
+
+    public function parse(string &$given) : bool 
+    {
+        if (is_numeric($given))
+        {
+            if (strpos($given, '.') === false && $this->strict)
+            {
+                return false;
+            }
+            $given = (float) $given;
+            return true;
+        }
+        return false;
+    }
+
 }

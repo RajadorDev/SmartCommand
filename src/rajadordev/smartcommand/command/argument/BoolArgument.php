@@ -27,17 +27,20 @@ class BoolArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true, string $trueName = 'true', string $falseName = 'false', bool $showAsList = false)
     {
-        parent::__construct($name, $showAsList ? implode('|', [$trueName, $falseName]) : 'bool', $required, function (string &$given) : bool {
-            $input = strtolower($given);
-            if (in_array($input, [$this->trueName, $this->falseName]))
-            {
-                $given = $input == $this->trueName;
-                return true;
-            }
-            return false;
-        });
+        parent::__construct($name, $showAsList ? implode('|', [$trueName, $falseName]) : 'bool', $required);
         $this->trueName = $trueName;
         $this->falseName = $falseName;
+    }
+
+    public function parse(string &$given) : bool 
+    {
+        $input = strtolower($given);
+        if (in_array($input, [$this->trueName, $this->falseName]))
+        {
+            $given = $input == $this->trueName;
+            return true;
+        }
+        return false;
     }
     
 }

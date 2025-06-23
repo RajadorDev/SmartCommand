@@ -27,21 +27,22 @@ class NumberArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true)
     {
-        parent::__construct($name, 'number', $required, 
-            static function (string &$given) : bool {
-                if (is_numeric($given))
-                {
-                    if (strpos($given, '.') !== false) 
-                    {
-                        $given = (float) $given;
-                    } else {
-                        $given = (int) $given;
-                    }
-                    return true;
-                }
-                return false;
+        parent::__construct($name, 'number', $required);
+    }
+
+    public function parse(string &$given) : bool 
+    {
+        if (is_numeric($given))
+        {
+            if (strpos($given, '.') !== false) 
+            {
+                $given = (float) $given;
+            } else {
+                $given = (int) $given;
             }
-        );
+            return true;
+        }
+        return false;
     }
 
 }

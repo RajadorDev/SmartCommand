@@ -24,9 +24,12 @@ class StringArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true)
     {
-        parent::__construct($name, 'string', $required, static function (string &$given) : bool {
-            return true;
-        });
+        parent::__construct($name, 'string', $required);
+    }
+
+    public function parse(string &$given): bool
+    {
+        return true;
     }
 
 }

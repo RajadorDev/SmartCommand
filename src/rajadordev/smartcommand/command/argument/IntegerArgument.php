@@ -24,17 +24,20 @@ class IntegerArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true)
     {
-        parent::__construct($name, 'interger', $required, static function (string &$given) : bool {
-            if (is_numeric($given))
+        parent::__construct($name, 'interger', $required);
+    }
+
+    public function parse(string &$given) : bool 
+    {
+        if (is_numeric($given))
+        {
+            if (strpos($given, '.') === false)
             {
-                if (strpos($given, '.') === false)
-                {
-                    $given = (int) $given;
-                    return true;
-                }
+                $given = (int) $given;
+                return true;
             }
-            return false;
-        });
+        }
+        return false;
     }
     
 }

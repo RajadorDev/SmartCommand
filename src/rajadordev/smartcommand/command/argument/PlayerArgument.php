@@ -40,21 +40,24 @@ class PlayerArgument extends BaseArgument
         {
             throw new InvalidArgumentException("$searchType is not valid for fetch players");
         }
-        parent::__construct($name, 'player', $required, function (string &$given) : bool {
-            if ($this->searchType == self::SEARCH_EXACT)
-            {
-                $player = Server::getInstance()->getPlayerExact($given);
-            } else if ($this->searchType == self::SEARCH_FROM_PREFIX) {
-                $player = Server::getInstance()->getPlayerByPrefix($given);
-            }
-            if (isset($player) && $player instanceof Player) 
-            {
-                $given = $player;
-                return true;
-            }
-            return false;
-        });
+        parent::__construct($name, 'player', $required);
         $this->searchType = $searchType;
+    }
+
+    public function parse(string &$given) : bool 
+    {
+        if ($this->searchType == self::SEARCH_EXACT)
+        {
+            $player = Server::getInstance()->getPlayerExact($given);
+        } else if ($this->searchType == self::SEARCH_FROM_PREFIX) {
+            $player = Server::getInstance()->getPlayerByPrefix($given);
+        }
+        if (isset($player) && $player instanceof Player) 
+        {
+            $given = $player;
+            return true;
+        }
+        return false;
     }
 
     public function getWrongMessage(CommandMessages $commandMessages, string $argumentUsed): string

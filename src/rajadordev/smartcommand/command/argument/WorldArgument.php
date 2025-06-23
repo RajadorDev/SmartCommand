@@ -34,30 +34,32 @@ class WorldArgument extends BaseArgument
      * @param boolean $autoload If true will load automatically 
      * @param boolean $required
      */
-    public function __construct(string $name, bool $autoload = true, bool $required = true)
+    public function __construct(string $name, protected readonly bool $autoload = true, bool $required = true)
     {
         parent::__construct(
             $name,
             'string',
-            $required,
-            static function (string &$given) use ($autoload) : bool {
-                $worldManager = Server::getInstance()->getWorldManager();
-                if ($worldManager->isWorldGenerated($given))
-                {
-                    if ($autoload)
-                    {
-                        $worldManager->loadWorld($given);
-                    }
-                    $world = $worldManager->getWorldByName($given);
-                    if ($world instanceof World)
-                    {
-                        $given = $world;
-                        return true;
-                    }
-                }
-                return false;
-            }
+            $required
         );
+    }
+
+    public function parse(string &$given) : bool 
+    {
+        $worldManager = Server::getInstance()->getWorldManager();
+        if ($worldManager->isWorldGenerated($given))
+        {
+            if ($this->autoload)
+            {
+                $worldManager->loadWorld($given);
+            }
+            $world = $worldManager->getWorldByName($given);
+            if ($world instanceof World)
+            {
+                $given = $world;
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getWrongMessage(CommandMessages $commandMessages, string $argumentUsed): string
