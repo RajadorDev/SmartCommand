@@ -22,6 +22,7 @@ namespace SmartCommand;
 use pocketmine\plugin\PluginBase;
 use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\message\DefaultMessages;
+use SmartCommand\utils\CommandUtils;
 
 final class Loader extends PluginBase 
 {
@@ -30,19 +31,15 @@ final class Loader extends PluginBase
 
     public function onEnable()
     {
-        if (!file_exists($dir = $this->getDataFolder()))
-        {
-            mkdir($dir);
-        }
+        $dir = $this->getDataFolder();
+        CommandUtils::openFolder($dir);
         $defaultMessagesList = [
             'English' => 'english-us.json',
             'Portuguese' => 'portuguese-br.json'
         ];
         $defaultMessagesDir = 'messages' . DIRECTORY_SEPARATOR;
-        if (!file_exists($messagesPath = $dir . $defaultMessagesDir))
-        {
-            mkdir($messagesPath);
-        }
+        $messagesPath = $dir . $defaultMessagesDir;
+        CommandUtils::openFolder($messagesPath);
         foreach ($defaultMessagesList as $resourceName)
         {
             $this->saveResource($defaultMessagesDir . $resourceName);

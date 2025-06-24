@@ -20,12 +20,14 @@ declare (strict_types=1);
 namespace SmartCommand\benchmark;
 
 use Exception;
+use JsonSerializable;
 use pocketmine\utils\TextFormat;
+use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\subcommand\SubCommand;
 use SmartCommand\utils\CommandUtils;
 
-class SmartCommandBenchmark
+class SmartCommandBenchmark implements JsonSerializable
 {
 
     const MAX_AVERAGE = 50;
@@ -154,6 +156,7 @@ class SmartCommandBenchmark
         if ($time > 0.05)
         {
             $this->violations++;
+            $this->onViolation($time);
         }
         if ($time > $this->highestTime)
         {
@@ -164,6 +167,11 @@ class SmartCommandBenchmark
             array_shift($this->average);
         }
         $this->average[] = $time;
+    }
+
+    protected function onViolation(float $time) 
+    {
+        SmartCommandAPI::onViolation($this, $time);
     }
 
     public function clearAverage() 
@@ -212,6 +220,21 @@ class SmartCommandBenchmark
                 $identation . '  §7Last time: §f' . $this->getLastTimeFormatted() . 'ms',
                 $identation . '  §7Average count: §f' . count($this->average) . ' times',
                 $identation . '  §7Violations: §f' . $this->getViolationsFormatted()
+            ]
+        );
+    }
+
+    public function jsonSerialize()
+    {
+        return array_map(
+            static function ($text) : string {
+                return TextFormat::clean((string) $text);
+            },
+            [
+                'average' => $this->getAverageFormatted(),
+                'highest' => $this->getHighestTimeFormatted(),
+                'used_times' => $this->benchmarkTimes,
+                'violations' => $this->violations
             ]
         );
     }

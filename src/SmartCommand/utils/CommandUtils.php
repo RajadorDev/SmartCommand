@@ -129,4 +129,17 @@ final class CommandUtils
         return $text;
     }
 
+    /**
+     * @param string $folder
+     * @return bool
+     */
+    public static function openFolder(string $folder) : bool 
+    {
+        if (!file_exists($folder))
+        {
+            return mkdir($folder);
+        }
+        return false;
+    }
+
 }
