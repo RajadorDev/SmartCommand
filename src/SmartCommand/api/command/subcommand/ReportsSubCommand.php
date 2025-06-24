@@ -21,11 +21,9 @@ namespace SmartCommand\api\command\subcommand;
 
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
-use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\subcommand\BaseSubCommand;
-use SmartCommand\command\subcommand\SubCommand;
 use SmartCommand\utils\AdminPermissionTrait;
 use SmartCommand\utils\CommandUtils;
 
