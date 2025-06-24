@@ -118,7 +118,7 @@ abstract class SmartCommand extends Command
                         } else if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
                             $this->onRun($sender, $commandLabel, $this->makeArguments($args));
                         }
-                    }
+                    } 
                 } else if (is_int($this->getArgNeedleIndex())) {
                     $this->sendUsage($sender, $commandLabel);
                 } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
@@ -130,7 +130,7 @@ abstract class SmartCommand extends Command
             SmartCommandAPI::commandErrorLog($sender, $error, '/' . $commandLabel);
             $this->messages->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
-        $this->executionBenchmark->stop();
+        $this->executionBenchmark->stopIfStarted();
     }
 
     public function getExecutionBenchmark() : SmartCommandBenchmark
@@ -193,6 +193,7 @@ abstract class SmartCommand extends Command
     {
         if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
         {
+            $this->executionBenchmark->stop();
             $subCommand->execute($sender, $commandLabel, $subCommandLabel, $args);
         }
     }

@@ -199,6 +199,16 @@ class SmartCommandBenchmark implements JsonSerializable
         }
     }
 
+    public function stopIfStarted() : bool 
+    {
+        if (!is_null($this->started))
+        {
+            $this->stop();
+            return true;
+        }
+        return false;
+    }
+
     public function isStopped() : bool 
     {
         return is_null($this->started);

@@ -140,6 +140,8 @@ final class SmartCommandAPI
         if (file_exists($filePath))
         {
             $fileData = file_get_contents($filePath);
+        } else {
+            $fileData = '';
         }
         $dateFormat = date('[d/m/Y H-i-s]');
         $fileData .= " \n \n$dateFormat: {$benchMark->getCommandFormat()} ends in {$time}ms";
