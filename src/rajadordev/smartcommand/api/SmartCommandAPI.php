@@ -54,6 +54,7 @@ final class SmartCommandAPI
 
     /**
      * @internal used by SmartCommand and SubCommands 
+     * @throws RuntimeException
      * @return void
      */
     public static function checkIfRegistered() : void 
