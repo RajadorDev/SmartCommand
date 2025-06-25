@@ -63,10 +63,10 @@ class SmartCommandBenchmark implements JsonSerializable
      * @return void
      */
     public static function benchmarkColor(float $value, array $pallet = [
-            [0.5, TextFormat::GREEN],
-            [1.0, TextFormat::YELLOW],
-            [1.5, TextFormat::GOLD],
-            [10.0, TextFormat::RED]
+            [35.0, TextFormat::GREEN],
+            [45.0, TextFormat::YELLOW],
+            [50.0, TextFormat::GOLD],
+            [65.0, TextFormat::RED]
         ], string $default = TextFormat::DARK_RED) : string {
         foreach ($pallet as $values)
         {

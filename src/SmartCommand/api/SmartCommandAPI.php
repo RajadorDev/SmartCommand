@@ -133,7 +133,7 @@ final class SmartCommandAPI
      */
     public static function onViolation(SmartCommandBenchmark $benchMark, float $time)
     {
-        $time = number_format($time, 2);
+        $time = number_format($time * 1000, 2);
         self::$plugin->getLogger()->alert("{$benchMark->getCommandFormat()} violated a tick and ended in §c{$time}ms");
         $name = $benchMark->getCommand()->getName();
         $filePath = self::$commandViolationsFolder . strtolower($name) . '_violations.txt';
