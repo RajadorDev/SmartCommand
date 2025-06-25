@@ -22,6 +22,7 @@ namespace SmartCommand\api\command\subcommand;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
+use SmartCommand\command\argument\StringArgument;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\subcommand\BaseSubCommand;
@@ -35,23 +36,35 @@ class StatusSubCommand extends BaseSubCommand
     use AdminPermissionTrait;
 
     protected function prepare()
-    {}
+    {
+        $this->registerArgument(0, new StringArgument('command_name', false));
+    }
 
     protected function onRun(CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args)
     {
-        /** @var SmartCommand[] */
-        $commands = array_filter(
-            Server::getInstance()->getCommandMap()->getCommands(),
-            static function (Command $command) : bool {
-                return $command instanceof SmartCommand;
+        if ($args->has('command_name'))
+        {
+            if ($commandFound = Server::getInstance()->getCommandMap()->getCommand(strtolower(ltrim($commandName = $args->getString('command_name'), '/'))))
+            {
+                if ($commandFound instanceof SmartCommand)
+                {
+                    $commands = [$commandFound];
+                } else {
+                    $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f/{$commandFound->getName()} §7is not a §fSmartCommand§c!");
+                }
+            } else {
+                $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f{$commandName} §cdoes not found!");
+                return;
             }
-        );
+        } else {
+            $commands = Server::getInstance()->getCommandMap()->getCommands();
+        }
         $messageFormat = " \n§8----====(§eSmartCommand §aStatus List§8)====----\n§8-";
         $subCommandsCount = 0;
         $commandsProcessed = [];
         foreach ($commands as $command)
         {
-            if (in_array($command, $commandsProcessed))
+            if (!($command instanceof SmartCommand) || in_array($command, $commandsProcessed))
             {
                 continue;
             }
@@ -75,14 +88,24 @@ class StatusSubCommand extends BaseSubCommand
             $commandsProcessed[] = $command;
         }
         $commandsCount = count($commands);
-        $messageFormat .= "\n" . CommandUtils::textLinesWithPrefix(
-            [
+        if ($args->has('command_name'))
+        {
+            $messageFormatLines = [
+                '',
+                'Total subcommands: §f' . $subCommandsCount,
+                ''
+            ];
+        } else {
+            $messageFormatLines = [
                 '',
                 'Total commands: §f' . $commandsCount,
                 '',
                 'Total subcommands: §f' . $subCommandsCount,
                 ''
-            ]
+            ];
+        }
+        $messageFormat .= "\n" . CommandUtils::textLinesWithPrefix(
+            $messageFormatLines
         );
         $sender->sendMessage($messageFormat);
     }

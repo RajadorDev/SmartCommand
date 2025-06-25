@@ -48,4 +48,9 @@ final class Loader extends PluginBase
         SmartCommandAPI::init($this);
     }
 
+    public function onDisable()
+    {
+        SmartCommandAPI::saveAllStatistics();
+    }
+
 }

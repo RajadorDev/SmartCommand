@@ -236,17 +236,12 @@ class SmartCommandBenchmark implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return array_map(
-            static function ($text) : string {
-                return TextFormat::clean((string) $text);
-            },
-            [
-                'average' => $this->getAverageFormatted(),
-                'highest' => $this->getHighestTimeFormatted(),
-                'used_times' => $this->benchmarkTimes,
-                'violations' => $this->violations
-            ]
-        );
+        return [
+            'average' => $this->average,
+            'last_time' => $this->lastTime,
+            'violations' => $this->violations,
+            'highest' => $this->highestTime
+        ];
     }
 
 

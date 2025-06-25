@@ -28,6 +28,7 @@ use SmartCommand\command\SmartCommand;
 use pocketmine\scheduler\FileWriteTask;
 use SmartCommand\api\command\FrameworkCommand;
 use SmartCommand\benchmark\SmartCommandBenchmark;
+use SmartCommand\command\subcommand\BaseSubCommand;
 
 final class SmartCommandAPI
 {
@@ -129,6 +130,7 @@ final class SmartCommandAPI
 
     /**
      * @param SmartCommandBenchmark $benchMark
+     * @param float $time
      * @return void
      */
     public static function onViolation(SmartCommandBenchmark $benchMark, float $time)
@@ -148,6 +150,69 @@ final class SmartCommandAPI
         Server::getInstance()->getScheduler()->scheduleAsyncTask(
             new FileWriteTask($filePath, $fileData)
         );
+    }
+
+    /**
+     * @internal Called by Loader in method onDisable
+     * @return void
+     */
+    public static function saveAllStatistics()
+    {
+        $started = microtime(true);
+        $commandsChecked = [];
+        $logger = self::$plugin->getLogger();
+        CommandUtils::openFolder(self::$statisticsFolder);
+        $logger->debug("Saving every command statistics...");
+        $count = 0;
+        foreach (Server::getInstance()->getCommandMap()->getCommands() as $command)
+        {
+            if ($command instanceof SmartCommand && !in_array($command, $commandsChecked))
+            {
+                $commandsChecked[] = $command;
+                try {
+                    $logger->debug("Saving {$command->getName()} statistics...");
+                    self::saveStatistics($command->getExecutionBenchmark());
+                    $count++;
+                    foreach ($command->getSubCommands() as $subcommand)
+                    {
+                        if ($subcommand instanceof BaseSubCommand)
+                        {
+                            self::saveStatistics($subcommand->getExecutionBenchmark());
+                            $count++;
+                        }
+                    }
+                } catch (Throwable $error) {
+                    $logger->error("Error ocurred while saving {$command->getName()} statistics: " . ((string) $error));
+                }
+            }
+        }
+        $finishedMs = (microtime(true) - $started) * 1000;
+        $finishedMs = number_format($finishedMs, 2);
+        $logger->debug("$count Statistics saved in {$finishedMs}ms");
+    }
+
+    /**
+     * @param SmartCommandBenchmark $benchmark
+     * @return void
+     */
+    public static function saveStatistics(SmartCommandBenchmark $benchmark)
+    {
+        if ($benchmark->getBenchmarkTimes() > 0)
+        {
+            $path = self::$statisticsFolder . str_replace(['/', ' '], ['', '_'], $benchmark->getCommandFormat());
+            if (file_exists($path))
+            {
+                $data = json_decode(file_get_contents($path), true);
+                if (!is_array($data))
+                {
+                    $data = [];
+                }
+            } else {
+                $data = [];
+            }
+            $data[] = $benchmark->jsonSerialize();
+            file_put_contents($path, json_encode($data));
+        }
     }
 
     
