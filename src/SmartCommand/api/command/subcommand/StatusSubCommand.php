@@ -50,7 +50,7 @@ class StatusSubCommand extends BaseSubCommand
                 {
                     $commands = [$commandFound];
                 } else {
-                    $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f/{$commandFound->getName()} §7is not a §fSmartCommand§c!");
+                    $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f/{$commandFound->getName()} §cis not a §fSmartCommand§c!");
                     return;
                 }
             } else {
