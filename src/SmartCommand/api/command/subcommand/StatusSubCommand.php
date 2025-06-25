@@ -51,6 +51,7 @@ class StatusSubCommand extends BaseSubCommand
                     $commands = [$commandFound];
                 } else {
                     $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f/{$commandFound->getName()} §7is not a §fSmartCommand§c!");
+                    return;
                 }
             } else {
                 $sender->sendMessage($this->getCommand()->getPrefix() . "§cCommand §f{$commandName} §cdoes not found!");
@@ -61,6 +62,7 @@ class StatusSubCommand extends BaseSubCommand
         }
         $messageFormat = " \n§8----====(§eSmartCommand §aStatus List§8)====----\n§8-";
         $subCommandsCount = 0;
+        $commandsCount = 0;
         $commandsProcessed = [];
         foreach ($commands as $command)
         {
@@ -86,8 +88,8 @@ class StatusSubCommand extends BaseSubCommand
                 $messageFormat .= "\n" . $subCommand->getExecutionBenchmark()->debugFormat(2) . "\n§8-      §7Uses: §f" . $subCommand->getExecutionBenchmark()->getBenchmarkTimes();
             }
             $commandsProcessed[] = $command;
+            $commandsCount++;
         }
-        $commandsCount = count($commands);
         if ($args->has('command_name'))
         {
             $messageFormatLines = [
