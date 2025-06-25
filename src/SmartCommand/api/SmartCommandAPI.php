@@ -107,6 +107,17 @@ final class SmartCommandAPI
      */
     public static function commandErrorLog(CommandSender $sender, Throwable $exception, string $formatUsed)
     {
+        self::errorLog("{$sender->getName()} execute {$formatUsed}:" . ((string) $exception), false);
+    }
+
+    /**
+     * @internal Called by crashed async tasks
+     * @param string $error
+     * @param bool $showInConsole
+     * @return void
+     */
+    public static function errorLog(string $text, bool $showInConsole = true)
+    {
         $currentFileData = '';
         if (file_exists(self::$commandErrorFile))
         {
@@ -115,9 +126,14 @@ final class SmartCommandAPI
         $dateFormat = date('[d/m/Y H-i-s]');
         file_put_contents(
             self::$commandErrorFile,
-            $currentFileData . "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}:" . ((string) $exception)
+             $currentFileData . "\n \n$dateFormat  " . $text
         );
+        if ($showInConsole)
+        {
+            self::$plugin->getLogger()->error($text);
+        }
     }
+
 
     /**
      * @param string $text

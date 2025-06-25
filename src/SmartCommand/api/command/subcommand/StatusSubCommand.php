@@ -19,7 +19,6 @@ declare (strict_types=1);
 
 namespace SmartCommand\api\command\subcommand;
 
-use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use SmartCommand\command\argument\StringArgument;
