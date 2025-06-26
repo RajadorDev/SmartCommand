@@ -66,11 +66,16 @@ abstract class SmartCommand extends Command
     public function __construct(string $name, string $description, string $usagePrefix = self::DEFAULT_USAGE_PREFIX, array $aliases = [], CommandMessages $messages = null)
     {
         parent::__construct($name, $description, $usagePrefix . "\n", $aliases);
-        $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
+        $this->executionBenchmark = $this->loadExecutionBenchmark();
         $this->setPermission($this::getRuntimePermission());
         $this->registerRule(new PermissionCommandRule);
         $this->messages = $messages ?? DefaultMessages::ENGLISH();
         $this->prepare();
+    }
+
+    protected function loadExecutionBenchmark() : SmartCommandBenchmark
+    {
+        return new SmartCommandBenchmark('Execution', $this);
     }
 
     public function getPrefix() : string 

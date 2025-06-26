@@ -219,7 +219,7 @@ class SmartCommandBenchmark implements JsonSerializable
         return $this->benchmarkTimes;
     }
 
-    public function debugFormat(int $startIdentation = 0)
+    public function debugFormat(int $startIdentation = 0) : string
     {
         $identation = $startIdentation > 0 ? str_repeat(' ', $startIdentation) : '';
         return CommandUtils::textLinesWithPrefix(

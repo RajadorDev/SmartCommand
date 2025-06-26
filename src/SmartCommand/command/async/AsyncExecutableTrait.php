@@ -21,11 +21,18 @@ namespace SmartCommand\command;
 
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
+use SmartCommand\benchmark\AsyncCommandBenchmark;
+use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\message\CommandMessages;
 use SmartCommand\task\AsyncCommandTask;
 
 trait AsyncExecutableTrait
 {
+
+    protected function loadExecutionBenchmark() : SmartCommandBenchmark
+    {
+        return new AsyncCommandBenchmark('Execution', $this);
+    }
 
     /**
      * A little way to schedule AsyncCommandTask

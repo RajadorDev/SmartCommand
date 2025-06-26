@@ -24,8 +24,11 @@ use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\command\AsyncExecutable;
 use SmartCommand\command\CommandArguments;
+use SmartCommand\command\SmartCommand;
+use SmartCommand\command\subcommand\BaseSubCommand;
 use Throwable;
 
 abstract class AsyncCommandTask extends AsyncTask
@@ -37,6 +40,8 @@ abstract class AsyncCommandTask extends AsyncTask
 
     const ARGUMENTS = 'args';
 
+    const BENCHMARK = 'benchmark';
+
     const TAG_ERROR = '__error';
 
     /** @var array will be filtered and will accept only thread safe value (string, float, int, bool) */
@@ -44,6 +49,9 @@ abstract class AsyncCommandTask extends AsyncTask
 
     /** @var string */
     protected $senderName;
+
+    /** @var int|null */
+    private $benchmarkProcessId = null;
 
     /**
      * @param CommandSender $sender
@@ -62,6 +70,15 @@ abstract class AsyncCommandTask extends AsyncTask
                 return (is_string($value) || is_int($value) || is_float($value) || is_bool($value));
             }
         );
+        if ($command instanceof SmartCommand || $command instanceof BaseSubCommand)
+        {
+            $benchmark = $command->getExecutionBenchmark();
+            if ($benchmark instanceof AsyncCommandBenchmark)
+            {
+                $this->benchmarkProcessId = $benchmark->start();
+                $this->saveToThreadStore($this->getInternalItemId(self::BENCHMARK), $benchmark);
+            }
+        }
     }
 
     protected function getInternalItemId(string $name) : string 
@@ -72,12 +89,7 @@ abstract class AsyncCommandTask extends AsyncTask
     public function onRun()
     {
         try {
-            if ($this->rawArgs)
-            {
-                $this->execute($this->senderName, $this->rawArgs);
-            } else {
-                $this->execute($this->senderName);
-            }
+            $this->execute($this->senderName, $this->rawArgs);
         } catch (Throwable $error) {
             $this->setResult([self::TAG_ERROR => (string) $error]);
         }
@@ -88,7 +100,7 @@ abstract class AsyncCommandTask extends AsyncTask
      * @param array $args
      * @return void
      */
-    abstract protected function execute(string $commandSender, array $args = null);
+    abstract protected function execute(string $commandSender, array $args);
 
     public function isValid() : bool 
     {
@@ -107,6 +119,12 @@ abstract class AsyncCommandTask extends AsyncTask
     public function onCompletion(Server $server)
     {
         try {
+            if (is_int($this->benchmarkProcessId))
+            {
+                /** @var AsyncCommandBenchmark */
+                $benchmark = $this->getFromThreadStore($this->getInternalItemId(self::BENCHMARK));
+                $benchmark->stopProcess($this->benchmarkProcessId);
+            }
             $result = $this->getResult();
             /** @var CommandArguments */
             $args = $this->getFromThreadStore($this->getInternalItemId(self::ARGUMENTS));

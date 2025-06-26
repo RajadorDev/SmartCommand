@@ -66,9 +66,14 @@ abstract class BaseSubCommand implements SubCommand
         $this->description = $description;
         $this->aliases = $aliases;
         $this->permission = $this::getRuntimePermission();
-        $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
+        $this->executionBenchmark = $this->loadExecutionBenchmark();
         $this->registerRule(new PermissionCommandRule);
         $this->prepare();
+    }
+
+    protected function loadExecutionBenchmark() : SmartCommandBenchmark
+    {
+        return new SmartCommandBenchmark('Execution', $this);
     }
 
     public function getName(): string
