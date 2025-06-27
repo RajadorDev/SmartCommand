@@ -17,12 +17,13 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command;
+namespace SmartCommand\command\async;
 
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\benchmark\SmartCommandBenchmark;
+use SmartCommand\command\CommandArguments;
 use SmartCommand\message\CommandMessages;
 use SmartCommand\task\AsyncCommandTask;
 

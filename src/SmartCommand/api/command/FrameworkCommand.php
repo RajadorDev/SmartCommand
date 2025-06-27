@@ -22,6 +22,7 @@ namespace SmartCommand\api\command;
 use pocketmine\command\CommandSender;
 use SmartCommand\api\command\subcommand\InfoSubCommand;
 use SmartCommand\api\command\subcommand\ReportsSubCommand;
+use SmartCommand\api\command\subcommand\StatisticsSubCommand;
 use SmartCommand\api\command\subcommand\StatusSubCommand;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\command\SmartCommand;
@@ -39,7 +40,8 @@ class FrameworkCommand extends SmartCommand
             [
                 new InfoSubCommand($this, 'info', 'See framework info', ['about', 'version', '?']),
                 new StatusSubCommand($this, 'status', 'Show status of subcommands and execution benchmark'),
-                new ReportsSubCommand($this, 'report', 'Report commands with violations since server uptime', ['violations'])
+                new ReportsSubCommand($this, 'report', 'Report commands with violations since server uptime', ['violations']),
+                new StatisticsSubCommand($this, 'statistics', 'See statistcs of some command and his subcommands')
             ]
         );
         $this->setPrefix(Loader::PREFIX);

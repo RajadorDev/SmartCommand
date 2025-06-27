@@ -22,7 +22,7 @@ namespace SmartCommand\benchmark;
 use Exception;
 use InvalidArgumentException;
 use pocketmine\utils\TextFormat;
-use SmartCommand\command\AsyncExecutable;
+use SmartCommand\command\async\AsyncExecutable;
 use SmartCommand\utils\CommandUtils;
 
 class AsyncCommandBenchmark extends SmartCommandBenchmark

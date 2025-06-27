@@ -21,7 +21,7 @@ namespace SmartCommand\api\task;
 
 use pocketmine\command\CommandSender;
 use SmartCommand\api\SmartCommandAPI;
-use SmartCommand\command\AsyncExecutable;
+use SmartCommand\command\async\AsyncExecutable;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\task\AsyncCommandTask;

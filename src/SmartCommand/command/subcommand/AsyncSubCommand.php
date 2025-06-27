@@ -21,8 +21,8 @@ namespace SmartCommand\command\subcommand;
 
 use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\benchmark\SmartCommandBenchmark;
-use SmartCommand\command\AsyncExecutable;
-use SmartCommand\command\AsyncExecutableTrait;
+use SmartCommand\command\async\AsyncExecutable;
+use SmartCommand\command\async\AsyncExecutableTrait;
 
 abstract class AsyncSubCommand extends BaseSubCommand implements AsyncExecutable
 {

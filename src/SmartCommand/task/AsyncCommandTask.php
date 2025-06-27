@@ -25,7 +25,7 @@ use pocketmine\Server;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\command\CommandSender;
 use SmartCommand\api\SmartCommandAPI;
-use SmartCommand\command\AsyncExecutable;
+use SmartCommand\command\async\AsyncExecutable;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
 

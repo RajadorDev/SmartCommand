@@ -17,11 +17,12 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command;
+namespace SmartCommand\command\async;
 
 use pocketmine\Player;
 use pocketmine\command\CommandSender;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
+use SmartCommand\command\CommandArguments;
 
 interface AsyncExecutable 
 {
