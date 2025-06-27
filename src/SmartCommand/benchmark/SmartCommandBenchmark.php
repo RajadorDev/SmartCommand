@@ -240,7 +240,9 @@ class SmartCommandBenchmark implements JsonSerializable
             'average' => $this->average,
             'last_time' => $this->lastTime,
             'violations' => $this->violations,
-            'highest' => $this->highestTime
+            'highest' => $this->highestTime,
+            'times' => $this->benchmarkTimes,
+            'created_at' => microtime(true)
         ];
     }
 

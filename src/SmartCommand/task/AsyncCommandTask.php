@@ -40,7 +40,7 @@ abstract class AsyncCommandTask extends AsyncTask
 
     const TAG_ERROR = '__error';
 
-    /** @var array will be filtered and will accept only thread safe value (string, float, int, bool) */
+    /** @var string json code that will be filtered and will accept only thread safe value (string, float, int, bool) */
     protected $rawArgs;
 
     /** @var string */
@@ -60,12 +60,12 @@ abstract class AsyncCommandTask extends AsyncTask
         $this->saveToThreadStore($this->getInternalItemId(self::SENDER), $sender);
         $this->saveToThreadStore($this->getInternalItemId(self::COMMAND), $command);
         $this->saveToThreadStore($this->getInternalItemId(self::ARGUMENTS), $args);
-        $this->rawArgs = array_filter(
+        $this->rawArgs = json_encode(array_filter(
             $args->raw(),
             static function ($value) : bool {
                 return (is_string($value) || is_int($value) || is_float($value) || is_bool($value));
             }
-        );
+        ));
         $this->init($sender, $command, $args);
         $this->benchmarkProcessId = $command->getAsyncBenchmark()->startTaskProcess();
     }
@@ -88,7 +88,7 @@ abstract class AsyncCommandTask extends AsyncTask
     public function onRun()
     {
         try {
-            $this->execute($this->senderName, $this->rawArgs);
+            $this->execute($this->senderName, json_decode($this->rawArgs, true));
         } catch (Throwable $error) {
             $this->setResult([self::TAG_ERROR => (string) $error]);
         }

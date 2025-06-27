@@ -201,12 +201,12 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
         $identation = $startIdentation > 0 ? str_repeat(' ', $startIdentation) : '';
         return parent::debugFormat($startIdentation) . "\n" . CommandUtils::textLinesWithPrefix(
             [
-                $identation . '  Last task time: §d' . $this->getLastAsyncTimeFormatted(),
-                $identation . '  Average task time: §d' . $this->getAverageFormatted(),
-                $identation . '  Highest task time: §d' . $this->getHighestAsyncTimeFormatted(),
-                $identation . '  Complete sync average: §f' . $this->getAverageSyncTimeFormatted(),
-                $identation . '  Last sync complete time: §f' . $this->getLastSyncTimeFormatted(),
-                $identation . '  Highest sync complete time: §f' . $this->getHighestSyncCompleteTimeFormatted()
+                $identation . '  Last task time: §d' . $this->getLastAsyncTimeFormatted() . 'ms',
+                $identation . '  Average task time: §d' . $this->getAsyncAverageTimeFormatted() . 'ms',
+                $identation . '  Highest task time: §d' . $this->getHighestAsyncTimeFormatted() . 'ms',
+                $identation . '  Complete sync average: §f' . $this->getAverageSyncTimeFormatted() . 'ms',
+                $identation . '  Last sync complete time: §f' . $this->getLastSyncTimeFormatted() . 'ms',
+                $identation . '  Highest sync complete time: §f' . $this->getHighestSyncCompleteTimeFormatted() . 'ms'
             ]
         );
     }
