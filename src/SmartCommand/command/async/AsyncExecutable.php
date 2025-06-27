@@ -21,6 +21,7 @@ namespace SmartCommand\command;
 
 use pocketmine\Player;
 use pocketmine\command\CommandSender;
+use SmartCommand\benchmark\AsyncCommandBenchmark;
 
 interface AsyncExecutable 
 {
@@ -57,5 +58,10 @@ interface AsyncExecutable
      * @return void
      */
     public function onInvalidComplete(string $username, CommandArguments $args, $result);
+
+    /**
+     * @return AsyncCommandBenchmark
+     */
+    public function getAsyncBenchmark() : AsyncCommandBenchmark;
 
 }

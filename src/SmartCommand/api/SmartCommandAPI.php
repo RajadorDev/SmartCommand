@@ -48,6 +48,16 @@ final class SmartCommandAPI
         return self::$frameworkDescription;
     }
 
+    public static function getFolder() : string 
+    {
+        return self::$plugin->getDataFolder();
+    }
+
+    public static function getStatisticFolder() : string 
+    {
+        return self::$statisticsFolder;
+    }
+
     /**
      * @internal Used by Loader class
      * @param Loader $loader
@@ -215,7 +225,7 @@ final class SmartCommandAPI
     {
         if ($benchmark->getBenchmarkTimes() > 0)
         {
-            $path = self::$statisticsFolder . str_replace(['/', ' '], ['', '_'], $benchmark->getCommandFormat());
+            $path = self::$statisticsFolder . str_replace(['/', ' '], ['', '_'], $benchmark->getCommandFormat()) . '.json';
             if (file_exists($path))
             {
                 $data = json_decode(file_get_contents($path), true);

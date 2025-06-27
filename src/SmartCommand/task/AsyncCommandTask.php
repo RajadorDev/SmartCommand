@@ -19,17 +19,15 @@ declare (strict_types=1);
 
 namespace SmartCommand\task;
 
-use pocketmine\command\CommandSender;
+use Throwable;
 use pocketmine\Player;
-use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\command\CommandSender;
 use SmartCommand\api\SmartCommandAPI;
-use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\command\AsyncExecutable;
 use SmartCommand\command\CommandArguments;
-use SmartCommand\command\SmartCommand;
-use SmartCommand\command\subcommand\BaseSubCommand;
-use Throwable;
+use SmartCommand\benchmark\AsyncCommandBenchmark;
 
 abstract class AsyncCommandTask extends AsyncTask
 {
@@ -39,8 +37,6 @@ abstract class AsyncCommandTask extends AsyncTask
     const COMMAND = 'command';
 
     const ARGUMENTS = 'args';
-
-    const BENCHMARK = 'benchmark';
 
     const TAG_ERROR = '__error';
 
@@ -70,16 +66,19 @@ abstract class AsyncCommandTask extends AsyncTask
                 return (is_string($value) || is_int($value) || is_float($value) || is_bool($value));
             }
         );
-        if ($command instanceof SmartCommand || $command instanceof BaseSubCommand)
-        {
-            $benchmark = $command->getExecutionBenchmark();
-            if ($benchmark instanceof AsyncCommandBenchmark)
-            {
-                $this->benchmarkProcessId = $benchmark->start();
-                $this->saveToThreadStore($this->getInternalItemId(self::BENCHMARK), $benchmark);
-            }
-        }
+        $this->init($sender, $command, $args);
+        $this->benchmarkProcessId = $command->getAsyncBenchmark()->startTaskProcess();
     }
+
+    /**
+     * Called inside __construct method
+     *
+     * @param CommandSender $sender
+     * @param AsyncExecutable $command
+     * @param CommandArguments $args
+     * @return void
+     */
+    abstract protected function init(CommandSender $sender, AsyncExecutable $command, CommandArguments $args);
 
     protected function getInternalItemId(string $name) : string 
     {
@@ -119,17 +118,18 @@ abstract class AsyncCommandTask extends AsyncTask
     public function onCompletion(Server $server)
     {
         try {
+            /** @var AsyncExecutable */
+            $command = $this->getFromThreadStore($this->getInternalItemId(self::COMMAND));
+            $command->getAsyncBenchmark()->startSyncCompleteTask();
             if (is_int($this->benchmarkProcessId))
             {
                 /** @var AsyncCommandBenchmark */
-                $benchmark = $this->getFromThreadStore($this->getInternalItemId(self::BENCHMARK));
+                $benchmark = $command->getAsyncBenchmark();
                 $benchmark->stopProcess($this->benchmarkProcessId);
             }
             $result = $this->getResult();
             /** @var CommandArguments */
             $args = $this->getFromThreadStore($this->getInternalItemId(self::ARGUMENTS));
-            /** @var AsyncExecutable */
-            $command = $this->getFromThreadStore($this->getInternalItemId(self::COMMAND));
             if ($this->isValid())
             {
                 /** @var CommandSender|Player */
@@ -150,6 +150,7 @@ abstract class AsyncCommandTask extends AsyncTask
             $task = get_class($this);
             SmartCommandAPI::errorLog("Error while executing AsyncCommandTask: ($task) " . ((string) $error));
         }
+        $command->getAsyncBenchmark()->stopSyncCompleteTask();
     }
 
 }

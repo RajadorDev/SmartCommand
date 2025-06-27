@@ -10,6 +10,7 @@
     "invalid-world": "§cWorld §f{name} §cnot found!",
     "invalid-item": "§cItem §f{given} §cnot found!",
     "usage-line": "§8-  §f{usage}",
+    "command-wait": "§cThis command is already being processed, please wait for completion.",
     "arguments": {
         "bool": "bool",
         "number": "number",

@@ -50,6 +50,8 @@ interface CommandMessages
 
     const INVALID_ITEM = 'invalid-item';
 
+    const ACTION_IN_PROCESS = 'command-wait';
+
     /**
      * @param string $id
      * @return boolean

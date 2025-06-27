@@ -66,6 +66,7 @@ class ReportsSubCommand extends BaseSubCommand
         {
             $message = CommandUtils::textLinesWithPrefix($reports, true);
             $message = "§8----====(§e§lSMART§bCOMMAND§r§8)====----\n" . $message;
+            $sender->sendMessage($message);
         } else {
             $sender->sendMessage($this->getCommand()->getPrefix() . 'There\'s no violation reports since server uptime');
         }

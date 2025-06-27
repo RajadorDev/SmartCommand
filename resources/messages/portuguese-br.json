@@ -10,6 +10,7 @@
     "invalid-world": "§cMapa §f{name} §cnão encontrado!",
     "invalid-item": "§cItem §f{given} §cnão é um item valido!",
     "usage-line": "§8-  §f{usage}",
+    "command-wait": "§cEste comando já está sendo processado, aguarde a conclusão!",
     "arguments": {
         "bool": "bool",
         "number": "numero",
