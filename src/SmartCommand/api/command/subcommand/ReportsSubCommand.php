@@ -47,7 +47,7 @@ class ReportsSubCommand extends BaseSubCommand
                 $benchMark = $command->getExecutionBenchmark();
                 if ($benchMark->getViolations() > 0)
                 {
-                    $reports[] = $benchMark->getCommandFormat() . ' §7Violations: §f' . $benchMark->getViolationsFormatted();
+                    $reports[] = $benchMark->getCommandFormat() . ':' . $benchMark->getViolationsFormatted() . ' Violations';
                 }
                 foreach ($command->getSubCommands() as $subCommand)
                 {
@@ -56,7 +56,7 @@ class ReportsSubCommand extends BaseSubCommand
                         $benchMark = $subCommand->getExecutionBenchmark();
                         if ($benchMark->getViolations() > 0)
                         {
-                            $reports[] = '  ' . $benchMark->getCommandFormat() . ' §7Violations: §f' . $benchMark->getViolationsFormatted();
+                            $reports[] = '  ' . $benchMark->getCommandFormat() . ': ' . $benchMark->getViolationsFormatted() . 'Violations';
                         }
                     }
                 }

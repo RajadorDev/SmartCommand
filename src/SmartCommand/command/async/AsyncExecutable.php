@@ -23,6 +23,7 @@ use pocketmine\Player;
 use pocketmine\command\CommandSender;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\command\CommandArguments;
+use SmartCommand\task\AsyncCommandTask;
 
 interface AsyncExecutable 
 {
@@ -31,6 +32,22 @@ interface AsyncExecutable
      * @return string
      */
     public function getCommandLine() : string;
+
+    /**
+     * Called inside AsyncCommandTask constructor
+     * 
+     * @param AsyncCommandTask $task
+     * @return void
+     */
+    public function onPrepareTask(AsyncCommandTask $task);
+
+    /**
+     * First method called after task be finished
+     * 
+     * @param AsyncCommandTask $task
+     * @return void
+     */
+    public function onFinishTask(AsyncCommandTask $task);
 
     /**
      * Called when the task is completed

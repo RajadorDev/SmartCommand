@@ -21,7 +21,6 @@ namespace SmartCommand\benchmark;
 
 use Exception;
 use InvalidArgumentException;
-use pocketmine\utils\TextFormat;
 use SmartCommand\command\async\AsyncExecutable;
 use SmartCommand\utils\CommandUtils;
 
@@ -96,6 +95,7 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
         if (is_float($this->syncCompleteTask))
         {
             $time = microtime(true) - $this->syncCompleteTask;
+            $this->syncCompleteTask = null;
             $this->addSyncCompleteTime($time);
         } else {
             throw new Exception("Can't stop a stoped complete task process");
@@ -174,7 +174,7 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
 
     public function getLastSyncTimeFormatted() : string 
     {
-        $time = $this->lastSyncCompleteTime;
+        $time = $this->lastSyncCompleteTime * 1000;
         return self::benchmarkColor($time) . number_format($time, 2);
     }
 
@@ -191,7 +191,7 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
 
     public function getAverageSyncTimeFormatted() : string 
     {
-        $time = $this->getAverageSyncTime();
+        $time = $this->getAverageSyncTime() * 1000;
         return self::benchmarkColor($time) . number_format($time, 2);
     }
 

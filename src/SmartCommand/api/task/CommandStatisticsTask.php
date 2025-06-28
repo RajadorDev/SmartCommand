@@ -35,18 +35,20 @@ class CommandStatisticsTask extends AsyncCommandTask
     /** @var bool */
     private $includeSubCommands = false;
 
-    /** @var string[] */
-    private $subCommands = [];
+    /** @var string */
+    private $subCommands = '[]';
 
     public function __construct(CommandSender $sender, SmartCommand $commandSearch, AsyncExecutable $command, CommandArguments $args)
     {
         if (!$args->has('sub_commands') || $args->getBool('sub_commands'))
         {
             $this->includeSubCommands = true;
+            $subcommands = [];
             foreach ($commandSearch->getSubCommands() as $subCommand)
             {
-                $this->subCommands[] = $subCommand->getName();
+                $subcommands[] = $subCommand->getName();
             }
+            $this->subCommands = json_encode($subcommands);
         }
         parent::__construct($sender, $command, $args);
     }
@@ -63,7 +65,7 @@ class CommandStatisticsTask extends AsyncCommandTask
         $checkList = [$this->commandName];
         if ($this->includeSubCommands)
         {
-            foreach ($this->subCommands as $subCommandName)
+            foreach (json_decode($this->subCommands, true) as $subCommandName)
             {
                 $checkList[] = $this->commandName . '_' . $subCommandName;
             }
@@ -99,7 +101,7 @@ class CommandStatisticsTask extends AsyncCommandTask
                     {
                         $hasAsync = true;
                         /** @var array{average:float[],highest_time:float,average_sync_complete:float[],highest_sync_complete:float} $asyncStatistic */
-                        $asyncStatistic = $dataValue['async_task'];
+                        $asyncStatistic = $statisticInfo['async_task'];
                         $highestAsync = $asyncStatistic['highest_time'];
                         if ($highestAsync > $currentHighestAsync)
                         {

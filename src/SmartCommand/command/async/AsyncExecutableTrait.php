@@ -24,11 +24,15 @@ use pocketmine\Server;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
 use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\CommandArguments;
+use SmartCommand\command\rule\defaults\WaitUntilCompleteCommandRule;
 use SmartCommand\message\CommandMessages;
 use SmartCommand\task\AsyncCommandTask;
 
 trait AsyncExecutableTrait
 {
+
+    /** @var WaitUntilCompleteCommandRule|null */
+    private $waitUntilCompleteRule = null;
 
     protected function loadExecutionBenchmark() : SmartCommandBenchmark
     {
@@ -47,6 +51,22 @@ trait AsyncExecutableTrait
             $task
         );
         return $task;
+    }
+
+    public function onPrepareTask(AsyncCommandTask $task)
+    {
+        if ($this->waitUntilCompleteRule)
+        {
+            $this->waitUntilCompleteRule->setWaiting($task->getSenderUsername(), true);
+        }
+    }
+
+    public function onFinishTask(AsyncCommandTask $task)
+    {
+        if ($this->waitUntilCompleteRule)
+        {
+            $this->waitUntilCompleteRule->setWaiting($task->getSenderUsername(), false);
+        }
     }
 
     /**

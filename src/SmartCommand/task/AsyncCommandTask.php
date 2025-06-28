@@ -28,6 +28,9 @@ use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\command\async\AsyncExecutable;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\benchmark\AsyncCommandBenchmark;
+use SmartCommand\command\SmartCommand;
+use SmartCommand\command\subcommand\SubCommand;
+use SmartCommand\message\CommandMessages;
 
 abstract class AsyncCommandTask extends AsyncTask
 {
@@ -68,6 +71,28 @@ abstract class AsyncCommandTask extends AsyncTask
         ));
         $this->init($sender, $command, $args);
         $this->benchmarkProcessId = $command->getAsyncBenchmark()->startTaskProcess();
+        $command->onPrepareTask($this);
+    }
+
+    public function getSenderUsername() : string 
+    {
+        return $this->senderName;
+    }
+
+    /** @return CommandSender|Player|null */
+    public function getSender()
+    {
+        return $this->getFromThreadStore($this->getInternalItemId(self::SENDER));
+    }
+
+    public function getCommand() : SmartCommand
+    {
+        return $this->getFromThreadStore($this->getInternalItemId(self::COMMAND));
+    }
+
+    public function getArguments() : CommandArguments
+    {
+        return $this->getFromThreadStore($this->getInternalItemId(self::ARGUMENTS));
     }
 
     /**
@@ -103,7 +128,7 @@ abstract class AsyncCommandTask extends AsyncTask
 
     public function isValid() : bool 
     {
-        $sender = $this->getFromThreadStore($this->getInternalItemId(self::SENDER));
+        $sender = $this->getSender();
         if ($sender instanceof CommandSender)
         {
             if ($sender instanceof Player)
@@ -119,8 +144,9 @@ abstract class AsyncCommandTask extends AsyncTask
     {
         try {
             /** @var AsyncExecutable */
-            $command = $this->getFromThreadStore($this->getInternalItemId(self::COMMAND));
+            $command = $this->getCommand();
             $command->getAsyncBenchmark()->startSyncCompleteTask();
+            $command->onFinishTask($this);
             if (is_int($this->benchmarkProcessId))
             {
                 /** @var AsyncCommandBenchmark */
@@ -129,11 +155,11 @@ abstract class AsyncCommandTask extends AsyncTask
             }
             $result = $this->getResult();
             /** @var CommandArguments */
-            $args = $this->getFromThreadStore($this->getInternalItemId(self::ARGUMENTS));
+            $args = $this->getArguments();
             if ($this->isValid())
             {
                 /** @var CommandSender|Player */
-                $sender = $this->getFromThreadStore($this->getInternalItemId(self::SENDER));
+                $sender = $this->getSender();
                 
                 if (is_array($result) && isset($result[self::TAG_ERROR]))
                 {
@@ -141,14 +167,23 @@ abstract class AsyncCommandTask extends AsyncTask
                     SmartCommandAPI::errorLog("Error while executing AsyncCommandTask: ($task) " . $result[self::TAG_ERROR]);
                     $command->onTaskError($sender);
                 } else {
-                    $command->onCompleteTask($sender, $args, $result);
+                    try {
+                        $command->onCompleteTask($sender, $args, $result);
+                    } catch (Throwable $error) {
+                        if ($command instanceof SmartCommand || $command instanceof SubCommand)
+                        {
+                            $sender->sendMessage($command->getMessages()->get(CommandMessages::GENERIC_INTERNAL_ERROR));
+                        }
+                        $error = (string) $error;
+                        SmartCommandAPI::errorLog("Error trying to complete a AsyncCommandTask: " . $error);
+                    }
                 }
             } else {
                 $command->onInvalidComplete($this->senderName, $args, $result);
             }
         } catch (Throwable $error) {
             $task = get_class($this);
-            SmartCommandAPI::errorLog("Error while executing AsyncCommandTask: ($task) " . ((string) $error));
+            SmartCommandAPI::errorLog("Error while executing sync AsyncCommandTask: ($task) " . ((string) $error));
         }
         $command->getAsyncBenchmark()->stopSyncCompleteTask();
     }

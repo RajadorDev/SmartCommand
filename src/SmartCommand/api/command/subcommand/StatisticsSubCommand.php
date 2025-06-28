@@ -22,6 +22,7 @@ namespace SmartCommand\api\command\subcommand;
 use pocketmine\Server;
 use SmartCommand\utils\CommandUtils;
 use pocketmine\command\CommandSender;
+use pocketmine\utils\TextFormat;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\CommandArguments;
 use SmartCommand\utils\AdminPermissionTrait;
@@ -75,7 +76,7 @@ class StatisticsSubCommand extends AsyncSubCommand
                 return $color . $format . 'ms';
             };
             $getAverage = static function (array $values, string $color = null) : string {
-                $average = array_sum($values) / count($values);
+                $average = (array_sum($values) / count($values)) * 1000;
                 $format = number_format($average, 2);
                 if ($color)
                 {
@@ -83,15 +84,15 @@ class StatisticsSubCommand extends AsyncSubCommand
                 }
                 return SmartCommandBenchmark::benchmarkColor($average) . $format . 'ms';
             };
-            /** @var array<string,array{average:float[],last_time:float,violations:int,highest:float,async_task:array{last_time:float,average:float[],highest_time:float,highest_sync_complete:float,average_sync_complete:float[]}}> $result */
+            /** @var array<string,array{average:float[],last_time:float,violations:int,highest_time:float,async_task:array{last_time:float,average:float[],highest_time:float,highest_sync_complete:float,average_sync_complete:float[]}}> $result */
             foreach ($result as $commandLine => $statistics)
             {
                 $lines[] = CommandUtils::textLinesWithPrefix(
                     [
                         '§f' . $commandLine . '§7:',
                         '  Average time: ' . $getAverage($statistics['average']),
-                        '  Highest time: ' . $getMS($statistics['highest']),
-                        '  Violations: ' . $statistics['violations'],
+                        '  Highest time: ' . $getMS($statistics['highest_time']),
+                        '  Violations: §a' . ($statistics['violations'] > 0 ? (TextFormat::RED . $statistics['violations']) : $statistics['violations']),
                     ]
                 );
                 if (isset($statistics['async_task']))
@@ -108,7 +109,7 @@ class StatisticsSubCommand extends AsyncSubCommand
                 }
             }
             $lines = implode("\n", $lines);
-            $sender->sendMessage("§8----====(§eCommand §f{/$commandName} §eStatus§8====)----\n$lines");
+            $sender->sendMessage("§8----====(§eCommand §f/$commandName §eStatus§8)====----\n$lines");
         } else {
             $sender->sendMessage($this->getCommand()->getPrefix() . '§cThere is no data to display about §f' . $arguments->getString('command_name') . '§c!');
         }
