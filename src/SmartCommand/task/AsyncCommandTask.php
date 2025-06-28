@@ -52,6 +52,9 @@ abstract class AsyncCommandTask extends AsyncTask
     /** @var int|null */
     private $benchmarkProcessId = null;
 
+    /** @var bool */
+    private $executedByConsole;
+
     /**
      * @param CommandSender $sender
      * @param AsyncExecutable $command
@@ -60,6 +63,7 @@ abstract class AsyncCommandTask extends AsyncTask
     public function __construct(CommandSender $sender, AsyncExecutable $command, CommandArguments $args)
     {
         $this->senderName = $sender->getName();
+        $this->executedByConsole = !($sender instanceof Player);
         $this->saveToThreadStore($this->getInternalItemId(self::SENDER), $sender);
         $this->saveToThreadStore($this->getInternalItemId(self::COMMAND), $command);
         $this->saveToThreadStore($this->getInternalItemId(self::ARGUMENTS), $args);
@@ -74,6 +78,11 @@ abstract class AsyncCommandTask extends AsyncTask
         $command->onPrepareTask($this);
     }
 
+    public function wasExecutedByConsole() : bool 
+    {
+        return $this->executedByConsole;
+    }
+
     public function getSenderUsername() : string 
     {
         return $this->senderName;
@@ -85,7 +94,7 @@ abstract class AsyncCommandTask extends AsyncTask
         return $this->getFromThreadStore($this->getInternalItemId(self::SENDER));
     }
 
-    public function getCommand() : SmartCommand
+    public function getCommand() : AsyncExecutable
     {
         return $this->getFromThreadStore($this->getInternalItemId(self::COMMAND));
     }

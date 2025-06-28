@@ -75,6 +75,7 @@ class CommandStatisticsTask extends AsyncCommandTask
             $file = $this->statisticFolder . $name . '.json';
             if (file_exists($file))
             {
+                sleep(30);
                 /** @var array{average:float[],last_time:float,violations:int,highest:float,times:int}[] */
                 $data = json_decode(
                     file_get_contents($file),

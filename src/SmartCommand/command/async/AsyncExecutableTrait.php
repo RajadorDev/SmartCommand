@@ -57,7 +57,10 @@ trait AsyncExecutableTrait
     {
         if ($this->waitUntilCompleteRule)
         {
-            $this->waitUntilCompleteRule->setWaiting($task->getSenderUsername(), true);
+            $senderName = $task->wasExecutedByConsole() 
+            ? ('@' . strtoupper($task->getSenderUsername())) 
+            : $task->getSenderUsername();
+            $this->waitUntilCompleteRule->setWaiting($senderName, true);
         }
     }
 
@@ -65,7 +68,10 @@ trait AsyncExecutableTrait
     {
         if ($this->waitUntilCompleteRule)
         {
-            $this->waitUntilCompleteRule->setWaiting($task->getSenderUsername(), false);
+            $senderName = $task->wasExecutedByConsole() 
+            ? ('@' . strtoupper($task->getSenderUsername())) 
+            : $task->getSenderUsername();
+            $this->waitUntilCompleteRule->setWaiting($senderName, false);
         }
     }
 

@@ -51,7 +51,7 @@ class WaitUntilCompleteCommandRule implements CommandSenderRule
 
     public function isWaiting(CommandSender $sender) : bool 
     {
-        return in_array(CommandUtils::hashSender($sender), $this->waiting);
+        return in_array(strtolower(CommandUtils::hashSender($sender)), $this->waiting);
     }
 
     /**
@@ -62,14 +62,15 @@ class WaitUntilCompleteCommandRule implements CommandSenderRule
     public function setWaiting($sender, bool $set) : bool 
     {
         $hash = is_string($sender) ? $sender : CommandUtils::hashSender($sender);
+        $hash = strtolower($hash);
         if ($set)
         {
-            if (!$this->isWaiting($sender))
+            if (!in_array($hash, $this->waiting))
             {
                 $this->waiting[] = $hash;
                 return true;
             }
-        } else if ($this->isWaiting($sender)) {
+        } else if (in_array($hash, $this->waiting)) {
             unset($this->waiting[array_search($hash, $this->waiting)]);
             return true;
         }
