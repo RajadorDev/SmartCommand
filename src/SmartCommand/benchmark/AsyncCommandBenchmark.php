@@ -143,7 +143,11 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
 
     public function getAsyncAverageTime() : float 
     {
-        return array_sum($this->averageTaskTimes) / count($this->averageTaskTimes);
+        if (count($this->averageTaskTimes))
+        {
+            return array_sum($this->averageTaskTimes) / count($this->averageTaskTimes);
+        }
+        return 0.0;
     }
 
     public function getAsyncAverageTimeFormatted() : string 
@@ -185,8 +189,12 @@ class AsyncCommandBenchmark extends SmartCommandBenchmark
 
     public function getAverageSyncTime() : float
     {
-        $time = array_sum($this->averageCompleteTimes) / count($this->averageCompleteTimes);
-        return $time;
+        if (count($this->averageCompleteTimes))
+        {
+            $time = array_sum($this->averageCompleteTimes) / count($this->averageCompleteTimes);
+            return $time;
+        }
+        return 0.0;
     }
 
     public function getAverageSyncTimeFormatted() : string 
