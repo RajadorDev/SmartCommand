@@ -41,7 +41,7 @@ class FrameworkCommand extends SmartCommand
                 new InfoSubCommand($this, 'info', 'See framework info', ['about', 'version', '?']),
                 new StatusSubCommand($this, 'status', 'Show status of subcommands and execution benchmark'),
                 new ReportsSubCommand($this, 'report', 'Report commands with violations since server uptime', ['violations']),
-                new StatisticsSubCommand($this, 'statistics', 'See statistcs of some command and his subcommands')
+                new StatisticsSubCommand($this, 'statistics', 'See statistcs of some command and his subcommands', true, ['statistic'])
             ]
         );
         $this->setPrefix(Loader::PREFIX);
