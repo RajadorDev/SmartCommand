@@ -141,7 +141,7 @@ abstract class BaseSubCommand implements SubCommand
                     } else {
                         $this->sendUsage($sender, $commandLabel, $subCommandLabel);
                     }
-                } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
+                } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION) && $this->formatArguments($args, $sender, $this->getMessages(), true)) {
                     $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
                 }
             }
