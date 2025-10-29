@@ -19,42 +19,25 @@ declare (strict_types=1);
 
 namespace rajadordev\smartcommand\command\argument;
 
-use InvalidArgumentException;
-use pocketmine\Server;
+use rajadordev\smartcommand\command\argument\type\PlayerSearchType;
 use rajadordev\smartcommand\message\CommandMessages;
-use pocketmine\player\Player;
 
 class PlayerArgument extends BaseArgument
 {
 
-    const SEARCH_FROM_PREFIX = 0;
+    protected PlayerSearchType $searchType;
 
-    const SEARCH_EXACT = 1;
-
-    /** @var int */
-    protected int $searchType;
-
-    public function __construct(string $name, int $searchType, bool $required = true)
+    public function __construct(string $name, PlayerSearchType $searchType, bool $required = true)
     {
-        if (!in_array($searchType, [self::SEARCH_FROM_PREFIX, self::SEARCH_EXACT]))
-        {
-            throw new InvalidArgumentException("$searchType is not valid for fetch players");
-        }
         parent::__construct($name, 'player', $required);
         $this->searchType = $searchType;
     }
 
     public function parse(string &$given) : bool 
     {
-        if ($this->searchType == self::SEARCH_EXACT)
+        if ($target = $this->searchType->search($given)) 
         {
-            $player = Server::getInstance()->getPlayerExact($given);
-        } else if ($this->searchType == self::SEARCH_FROM_PREFIX) {
-            $player = Server::getInstance()->getPlayerByPrefix($given);
-        }
-        if (isset($player) && $player instanceof Player) 
-        {
-            $given = $player;
+            $given = $target;
             return true;
         }
         return false;
