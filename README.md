@@ -134,6 +134,8 @@ You can create your own `CommandSenderRule` to use across multiple commands in y
 
 ```php
 use pocketmine\command\CommandSender;
+use rajadordev\smartcommand\command\SmartCommand;
+use rajadordev\smartcommand\command\subcommand\SubCommand;
 use rajadordev\smartcommand\command\rule\CommandSenderRule;
 
 class OnlyLowercaseName implements CommandSenderRule
@@ -141,7 +143,7 @@ class OnlyLowercaseName implements CommandSenderRule
     /**
      * @return bool True if the sender is allowed to use the command
      */
-    public function parse(CommandSender $sender, $command): bool
+    public function parse(CommandSender $sender, SmartCommand|SubCommand $command): bool
     {
         return $sender->getName() === strtolower($sender->getName());
     }
