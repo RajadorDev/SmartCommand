@@ -152,7 +152,7 @@ class OnlyLowercaseName implements CommandSenderRule
      * Return the message shown when the rule fails
      * @see rajadordev\smartcommand\message\CommandMessages
      */
-    public function getMessage($command, CommandSender $sender): string
+    public function getMessage(SmartCommand|SubCommand $command, CommandSender $sender): string
     {
         return '§cHey, stop! You are using an uppercase character in your name';
     }
@@ -196,7 +196,7 @@ use rajadordev\smartcommand\command\subcommand\BaseSubCommand;
 
 class PopupSubCommand extends BaseSubCommand
 {
-    protected static function getRunTimePermission(): string
+    protected function getRunTimePermission(): string
     {
         return 'subcommand.permission';
     }
