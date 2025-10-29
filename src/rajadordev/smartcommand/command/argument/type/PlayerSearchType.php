@@ -43,7 +43,7 @@ enum PlayerSearchType
                 $found = null;
                 foreach ($server->getOnlinePlayers() as $onlinePlayer) {
                     $onlinePlayerName = strtolower($onlinePlayer->getName());
-                    if (str_contains($prefix, $onlinePlayerName)) {
+                    if (str_contains($onlinePlayerName, $prefix)) {
                         $onlinePlayerNameLength = strlen($onlinePlayerName);
                         if (is_null($lastCharsCount) || $onlinePlayerNameLength < $lastCharsCount) {
                             $found = $onlinePlayer;
