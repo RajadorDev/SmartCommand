@@ -76,6 +76,7 @@ abstract class SmartCommand extends Command implements PluginOwned
         $this->executionBenchmark = new SmartCommandBenchmark('Execution', $this);
         $this->setPermission($this->getRuntimePermission());
         $this->messages = $messages ?? DefaultMessages::ENGLISH();
+        $this->argumentsDescription = $description;
         $this->prepare();
     }
 
