@@ -1,6 +1,7 @@
 {
     "name": "rajadordev/smartcommand",
     "description": "A advanced command framework for PocketMine",
+    "type": "library",
     "autoload": {
         "classmap": ["src"]
     },
