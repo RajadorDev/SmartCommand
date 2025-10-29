@@ -41,7 +41,7 @@ interface CommandSenderRule
      * @param int $executionType
      * @return boolean
      */
-    public function parse(CommandSender $sender, $command, int $executionType) : bool;
+    public function parse(CommandSender $sender, SmartCommand|SubCommand $command, int $executionType) : bool;
 
     /**
      * @param SmartCommand|SubCommand $command

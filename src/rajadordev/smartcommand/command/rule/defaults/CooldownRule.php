@@ -86,7 +86,7 @@ class CooldownRule implements CommandSenderRule
         unset($this->cooldownList[CommandUtils::hashSender($sender)]);
     }
 
-    public function parse(CommandSender $sender, $command, int $executionType): bool
+    public function parse(CommandSender $sender, SmartCommand|SubCommand $command, int $executionType): bool
     {
         if ($executionType === CommandSenderRule::RULE_PRE_EXECUTION)
         {

@@ -31,7 +31,7 @@ use rajadordev\smartcommand\command\subcommand\SubCommand;
 class PermissionCommandRule implements CommandSenderRule
 {
 
-    public function parse(CommandSender $sender, $command, int $executionType): bool
+    public function parse(CommandSender $sender, SmartCommand|SubCommand $command, int $executionType): bool
     {
         return $sender->hasPermission($command->getPermission());
     }

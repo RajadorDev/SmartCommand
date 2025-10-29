@@ -52,7 +52,7 @@ trait RulesHolderTrait
      * @param CommandSenderRule ...$rules
      * @return void
      */
-    protected function registerRules(...$rules) : void
+    protected function registerRules(CommandSenderRule ...$rules) : void
     {
         foreach ($rules as $rule)
         {
