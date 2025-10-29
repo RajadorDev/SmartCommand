@@ -164,16 +164,9 @@ final class SmartCommandAPI
      */
     public static function commandErrorLog(CommandSender $sender, Throwable $exception, string $formatUsed) : void
     {
-        $currentFileData = '';
-        if (file_exists(self::$commandErrorFile))
-        {
-            $currentFileData = file_get_contents(self::$commandErrorFile);
-        }
+        $file = fopen(self::$commandErrorFile, 'a');
         $dateFormat = date('[d/m/Y H-i-s]');
-        file_put_contents(
-            self::$commandErrorFile,
-            $currentFileData . "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}:" . ((string) $exception)
-        );
+        fwrite($file, "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}:" . ((string) $exception));
     }
 
     public static function debug(string $text) : void
