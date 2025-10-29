@@ -1,6 +1,6 @@
 --- 
 branches:
-- master
+- development
 projects:
   SmartCommand:
     path: ""
