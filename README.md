@@ -19,6 +19,24 @@ if (!SmartCommandAPI::isRegistered()) {
 }
 ```
 
+## Poggit
+
+If you are creating a plugin in poggit, you can add the SmartCommand lib in your `.poggit.yml`:
+
+```yaml
+--- # .poggit.yml example
+build-by-default: true
+branches:
+- yourbranch
+projects:
+  YourProjectName:
+    libs:
+      - src: RajadorDev/SmartCommand/SmartCommand
+        version: ^3.0.0
+    path: ''
+...
+```
+
 ## Creating a new command
 
 You can create a new command using the abstract class `rajadordev\smartcommand\command\SmartCommand`:
