@@ -170,7 +170,7 @@ final class SmartCommandAPI
     {
         $file = fopen(self::$commandErrorFile, 'a');
         $dateFormat = date('[d/m/Y H-i-s]');
-        fwrite($file, "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}:" . ((string) $exception));
+        fwrite($file, "\n \n{$dateFormat}  {$sender->getName()} execute {$formatUsed}: " . ((string) $exception));
     }
 
     public static function debug(string $text) : void
