@@ -23,6 +23,7 @@ use Exception;
 use InvalidArgumentException;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use rajadordev\smartcommand\api\SmartCommandAPI;
 use rajadordev\smartcommand\message\CommandMessages;
 
 /**
@@ -32,8 +33,20 @@ use rajadordev\smartcommand\message\CommandMessages;
 final class DefaultMessages 
 {
 
+    /** This is the global index to save DefaultMessages and reuse when there are 2 or more SmartCommand libs running */
+    const MESSAGES_GLOBAL_INDEX = SmartCommandAPI::GLOBAL_PREFIX_ID . '-messages-' . SmartCommandAPI::VERSION;
+
     /** @var array<string,CommandMessages> */
     private static $messages = [];
+
+    public static function tryLoadFromGlobal() : bool
+    {
+        if (isset($GLOBALS[self::MESSAGES_GLOBAL_INDEX])) {
+            self::$messages = $GLOBALS[self::MESSAGES_GLOBAL_INDEX]::all();
+            return true;
+        }
+        return false;
+    }
 
     public static function init(string $dir, array $defaultList)
     {
@@ -51,9 +64,16 @@ final class DefaultMessages
                 self::$messages[strtoupper($name)] = BaseCommandMessages::messagesFromFile($filePath, '', Config::JSON, $messages);
                 Server::getInstance()->getLogger()->debug("Default messages $name registered suceffully from $filePath");
             }
+            $GLOBALS[self::MESSAGES_GLOBAL_INDEX] = get_called_class();
         } else {
             throw new Exception("Default messages already registered");
         }
+    }
+
+    /** @return array<string,CommandMessages> */
+    public static function all() : array 
+    {
+        return self::$messages;
     }
 
     /**

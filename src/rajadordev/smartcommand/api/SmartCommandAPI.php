@@ -33,6 +33,8 @@ final class SmartCommandAPI
 
     const POCKETMINE_API = ['^5.0.0'];
 
+    const GLOBAL_PREFIX_ID = 'SmartCommand-';
+
     /** @var string */
     private static string $commandErrorFolder, $commandErrorFile;
 
@@ -98,57 +100,63 @@ final class SmartCommandAPI
             'github' => 'https://github.com/rajadordev/SmartCommand',
             'discord' => 'rajadortv'
         ];
-        $defaultMessagesList = [
-            'English' => [
-                'file' => 'english-us.json',
-                'data' => [
-                    'subcommand-notfound' => '§cSub-command §f"§7{subcommand}§f" §cdoes not exist!',
-                    'invalid-argument' => '§cArgument §f{name} §cmust be type §f{type_description}§c!',
-                    'player-notfound' => '§cPlayer §f{name} §cnot found!',
-                    'internal-error' => '§cAn internal error occurred while executing this command! Please try again later.',
-                    'no-allowed' => '§cYou do not have permission to use this command',
-                    'in-game-command' => '§cYou can only use this command in-game!',
-                    'in-console-command' => '§cYou can only use this command in the console!',
-                    'sender-cooldown' => '§cPlease wait §f{cooldown}§7s §cbefore using this command again!',
-                    'invalid-world' => '§cWorld §f{name} §cnot found!',
-                    'usage-line' => '§8-  §f{usage}',
-                    'arguments' => [
-                        'bool' => 'bool',
-                        'number' => 'number',
-                        'player' => 'player',
-                        'float' => 'float',
-                        'integer' => 'int',
-                        'string' => 'string',
-                        'text' => 'text'
+        if (DefaultMessages::tryLoadFromGlobal())
+        {
+            Server::getInstance()->getLogger()->debug("DefaultMessages loaded from cache suceffully");
+        } else {
+            Server::getInstance()->getLogger()->debug("Loading DefaultMessages from smartcommands files....");
+            $defaultMessagesList = [
+                'English' => [
+                    'file' => 'english-us.json',
+                    'data' => [
+                        'subcommand-notfound' => '§cSub-command §f"§7{subcommand}§f" §cdoes not exist!',
+                        'invalid-argument' => '§cArgument §f{name} §cmust be type §f{type_description}§c!',
+                        'player-notfound' => '§cPlayer §f{name} §cnot found!',
+                        'internal-error' => '§cAn internal error occurred while executing this command! Please try again later.',
+                        'no-allowed' => '§cYou do not have permission to use this command',
+                        'in-game-command' => '§cYou can only use this command in-game!',
+                        'in-console-command' => '§cYou can only use this command in the console!',
+                        'sender-cooldown' => '§cPlease wait §f{cooldown}§7s §cbefore using this command again!',
+                        'invalid-world' => '§cWorld §f{name} §cnot found!',
+                        'usage-line' => '§8-  §f{usage}',
+                        'arguments' => [
+                            'bool' => 'bool',
+                            'number' => 'number',
+                            'player' => 'player',
+                            'float' => 'float',
+                            'integer' => 'int',
+                            'string' => 'string',
+                            'text' => 'text'
+                        ]
+                    ]
+                ],
+                'Portuguese' => [
+                    'file' => 'portuguese-br.json',
+                    'data' => [
+                        'subcommand-notfound' => '§cSub-comando §f"§7{subcommand}§f" §cnão existe!',
+                        'invalid-argument' => '§cArgumento §f{name} §cprecisa ser do tipo §f{type_description}§c!',
+                        'player-notfound' => '§cJogador §f{name} §cnão encontrado!',
+                        'internal-error' => '§cOcorreu um erro interno ao realizar este comando! Tente novamente mais tarde.',
+                        'no-allowed' => '§cVocê não tem permissão para usar este comando',
+                        'in-game-command' => '§cVocê só pode usar este comando dentro do jogo!',
+                        'in-console-command' => '§cVocê só pode usar este comando no console!',
+                        'usage-line' => '§8-  §f{usage}',
+                        'sender-cooldown' => '§cDigite o comando novamente em §f{cooldown}§7s§c!',
+                        'invalid-world' => '§cMapa §f{name} §cnão encontrado!',
+                        'arguments' => [
+                            'bool' => 'bool',
+                            'number' => 'numero',
+                            'player' => 'jogador',
+                            'float' => 'float',
+                            'integer' => 'int',
+                            'string' => 'string',
+                            'text' => 'texto'
+                        ]
                     ]
                 ]
-            ],
-            'Portuguese' => [
-                'file' => 'portuguese-br.json',
-                'data' => [
-                    'subcommand-notfound' => '§cSub-comando §f"§7{subcommand}§f" §cnão existe!',
-                    'invalid-argument' => '§cArgumento §f{name} §cprecisa ser do tipo §f{type_description}§c!',
-                    'player-notfound' => '§cJogador §f{name} §cnão encontrado!',
-                    'internal-error' => '§cOcorreu um erro interno ao realizar este comando! Tente novamente mais tarde.',
-                    'no-allowed' => '§cVocê não tem permissão para usar este comando',
-                    'in-game-command' => '§cVocê só pode usar este comando dentro do jogo!',
-                    'in-console-command' => '§cVocê só pode usar este comando no console!',
-                    'usage-line' => '§8-  §f{usage}',
-                    'sender-cooldown' => '§cDigite o comando novamente em §f{cooldown}§7s§c!',
-                    'invalid-world' => '§cMapa §f{name} §cnão encontrado!',
-                    'arguments' => [
-                        'bool' => 'bool',
-                        'number' => 'numero',
-                        'player' => 'jogador',
-                        'float' => 'float',
-                        'integer' => 'int',
-                        'string' => 'string',
-                        'text' => 'texto'
-                    ]
-                ]
-            ]
-        ];
-        DefaultMessages::init($folder . 'messages' . DIRECTORY_SEPARATOR, $defaultMessagesList);
+            ];
+            DefaultMessages::init($folder . 'messages' . DIRECTORY_SEPARATOR, $defaultMessagesList);
+        }
     }
 
     /**
