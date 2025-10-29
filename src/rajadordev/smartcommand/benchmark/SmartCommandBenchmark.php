@@ -20,11 +20,11 @@ declare (strict_types=1);
 namespace rajadordev\smartcommand\benchmark;
 
 use Exception;
+use Stringable;
 use pocketmine\utils\TextFormat;
+use rajadordev\smartcommand\utils\CommandUtils;
 use rajadordev\smartcommand\command\SmartCommand;
 use rajadordev\smartcommand\command\subcommand\SubCommand;
-use rajadordev\smartcommand\utils\CommandUtils;
-use Stringable;
 
 class SmartCommandBenchmark implements Stringable
 {

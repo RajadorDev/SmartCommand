@@ -37,7 +37,6 @@ use rajadordev\smartcommand\command\subcommand\SubCommand;
 use rajadordev\smartcommand\command\rule\CommandSenderRule;
 use rajadordev\smartcommand\benchmark\SmartCommandBenchmark;
 use rajadordev\smartcommand\command\subcommand\SubCommandHolderTrait;
-use rajadordev\smartcommand\command\rule\defaults\PermissionCommandRule;
 
 abstract class SmartCommand extends Command implements PluginOwned
 {
