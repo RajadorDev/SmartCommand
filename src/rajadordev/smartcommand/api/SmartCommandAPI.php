@@ -29,7 +29,7 @@ use rajadordev\smartcommand\message\DefaultMessages;
 final class SmartCommandAPI
 {
 
-    const VERSION = '3.0.0';
+    const VERSION = '3.0.1';
 
     const POCKETMINE_API = ['^5.0.0'];
 

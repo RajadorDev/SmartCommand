@@ -1,6 +1,6 @@
 ---
 name: SmartCommand
-version: 3.0.0
+version: 3.0.1
 authors: [Rajador]
 description: 'PocketMine framework to create advanced or simple commands in an easy way'
 antigen: rajadordev\smartcommand

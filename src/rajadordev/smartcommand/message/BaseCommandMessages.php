@@ -66,6 +66,11 @@ class BaseCommandMessages implements CommandMessages
         return $this;
     }
 
+    public function getPrefix() : string 
+    {
+        return $this->prefix;
+    }
+
     public function get(string $id, array|string|null $replace = null, array|string|null $to = null, bool $usePrefix = true): string
     {
         if (isset($this->messages[$id]))
@@ -110,6 +115,11 @@ class BaseCommandMessages implements CommandMessages
     public function copy() : BaseCommandMessages
     {
         return clone $this;
+    }
+
+    public function copyMessages() : array 
+    {
+        return $this->messages;
     }
 
     public function addMessagesFromFile(string $filePath, int $fileType = Config::JSON) : CommandMessages

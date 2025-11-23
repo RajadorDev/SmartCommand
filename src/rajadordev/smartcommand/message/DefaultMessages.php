@@ -42,7 +42,11 @@ final class DefaultMessages
     public static function tryLoadFromGlobal() : bool
     {
         if (isset($GLOBALS[self::MESSAGES_GLOBAL_INDEX])) {
-            self::$messages = $GLOBALS[self::MESSAGES_GLOBAL_INDEX]::all();
+            foreach ($GLOBALS[self::MESSAGES_GLOBAL_INDEX]::all() as $name => $messages)
+            {
+                /** @var BaseCommandMessages $messages */
+                self::$messages[$name] = new BaseCommandMessages($messages->copyMessages(), $messages->getPrefix());
+            }
             return true;
         }
         return false;
