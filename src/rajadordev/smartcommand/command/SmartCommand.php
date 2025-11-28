@@ -180,7 +180,7 @@ abstract class SmartCommand extends Command implements PluginOwned
 
     protected function sendUsage(CommandSender $commandSender, string $label = null, int $page = 0, int $maxPerPage = 0) : void
     {
-        $commandSender->sendMessage($this->generateUsage($label, $commandSender, $page, $maxPerPage));
+        $commandSender->sendMessage($this->generateUsage($label ?? $this->getName(), $commandSender, $page, $maxPerPage));
     }
 
     protected function generateUsageList(string $label, CommandSender $sender, int $page = null, int $maxPerPage = null) : array 
