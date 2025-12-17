@@ -58,7 +58,7 @@ class SayCommand extends SmartCommand
      * @see rajadordev\smartcommand\command\rule\defaults\PermissionCommandRule
      * @return string
      */
-    protected static function getRuntimePermission(): string
+    protected function getRuntimePermission(): string
     {
         return 'mypermission.perm';
     }
