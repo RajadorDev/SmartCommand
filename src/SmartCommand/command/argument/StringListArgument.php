@@ -35,7 +35,7 @@ class StringListArgument extends BaseArgument
         parent::__construct($name, implode('|', $list), $required, function (string &$given) : bool {
             if (in_array(strtolower($given), $this->list))
             {
-                $given = strtotime($given);
+                $given = strtolower($given);
                 return true;
             }
             return false;
