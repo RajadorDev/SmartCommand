@@ -40,7 +40,7 @@ class StringListArgument extends BaseArgument
     {
         if (in_array(strtolower($given), $this->list))
         {
-            $given = strtotime($given);
+            $given = strtolower($given);
             return true;
         }
         return false;
