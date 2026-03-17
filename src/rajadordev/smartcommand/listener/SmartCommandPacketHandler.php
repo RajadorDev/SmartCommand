@@ -55,7 +55,8 @@ final class SmartCommandPacketHandler implements Listener
         $logger = Server::getInstance()->getLogger();
         if (isset($GLOBALS[self::HANDLER_VERSION_IDENTIFIER])) {
             if (!version_compare(self::VERSION, $GLOBALS[self::HANDLER_VERSION_IDENTIFIER]::VERSION, '>')) {
-                $logger->debug("A SmartCommandPacket handler is already registered");
+                $version = $GLOBALS[self::HANDLER_VERSION_IDENTIFIER]::VERSION;
+                $logger->debug("A SmartCommandPacket handler $version is already registered");
                 return;
             }
             /** Replacing the outdated PacketHandler */
@@ -64,7 +65,8 @@ final class SmartCommandPacketHandler implements Listener
             $logger->debug("Unregistering old handler version ($oldVersion)...");
             HandlerListManager::global()->unregisterAll($oldPacketHandler);
         }
-        Server::getInstance()->getPluginManager()->registerEvents(new self, $plugin);
+        Server::getInstance()->getPluginManager()->registerEvents($handlerInstance = new self, $plugin);
+        $GLOBALS[self::HANDLER_VERSION_IDENTIFIER] = $handlerInstance;
         $version = self::VERSION;
         $logger->debug("SmartCommandPacket handler $version registered");
     }
