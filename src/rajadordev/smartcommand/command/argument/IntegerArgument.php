@@ -24,7 +24,7 @@ class IntegerArgument extends BaseArgument
 
     public function __construct(string $name, bool $required = true)
     {
-        parent::__construct($name, 'interger', $required);
+        parent::__construct($name, 'integer', $required);
     }
 
     public function parse(string &$given) : bool 
