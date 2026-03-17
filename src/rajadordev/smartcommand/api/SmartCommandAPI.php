@@ -54,7 +54,7 @@ final class SmartCommandAPI
         'text' => AvailableCommandsPacket::ARG_TYPE_RAWTEXT,
         'integer' => AvailableCommandsPacket::ARG_TYPE_INT,
         'float' => AvailableCommandsPacket::ARG_TYPE_FLOAT,
-        /** It was write error fixed since 2.3.0, but plugins using SmartCommand lower than 2.3.0 will keep using this keyword */
+        /** It was write error fixed since 3.1.0, but plugins using SmartCommand lower than 3.1 will keep using this keyword */
         'interger' => AvailableCommandsPacket::ARG_TYPE_INT
     ];
 
