@@ -71,6 +71,9 @@ abstract class SmartCommand extends Command
         $this->registerRule(new PermissionCommandRule);
         $this->messages = $messages ?? DefaultMessages::ENGLISH();
         $this->prepare();
+        if (empty($this->argumentsDescription) && (count($this->arguments) > 0 || count($this->getSubCommands()) == 0)) {
+            $this->argumentsDescription = TextFormat::GRAY . $description;
+        }
     }
 
     protected function loadExecutionBenchmark() : SmartCommandBenchmark
