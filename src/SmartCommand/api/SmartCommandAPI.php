@@ -25,7 +25,6 @@ use SmartCommand\Loader;
 use SmartCommand\utils\CommandUtils;
 use pocketmine\command\CommandSender;
 use SmartCommand\command\SmartCommand;
-use pocketmine\scheduler\FileWriteTask;
 use SmartCommand\api\command\FrameworkCommand;
 use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\subcommand\BaseSubCommand;
@@ -121,23 +120,17 @@ final class SmartCommandAPI
     }
 
     /**
-     * @internal Called by crashed async tasks
+     * @internal Called by SmartCommand/SubCommand when some error happens
      * @param string $error
      * @param bool $showInConsole
      * @return void
      */
     public static function errorLog(string $text, bool $showInConsole = true)
     {
-        $currentFileData = '';
-        if (file_exists(self::$commandErrorFile))
-        {
-            $currentFileData = file_get_contents(self::$commandErrorFile);
-        }
         $dateFormat = date('[d/m/Y H-i-s]');
-        file_put_contents(
-            self::$commandErrorFile,
-             $currentFileData . "\n \n$dateFormat  " . $text
-        );
+        $file = fopen(self::$commandErrorFile, 'a');
+        fwrite($file, "\n \n$dateFormat  " . $text);
+        fclose($file);
         if ($showInConsole)
         {
             self::$plugin->getLogger()->error($text);
@@ -165,17 +158,10 @@ final class SmartCommandAPI
         self::$plugin->getLogger()->alert("{$benchMark->getCommandFormat()} violated a tick and ended in §c{$time}ms");
         $name = $benchMark->getCommand()->getName();
         $filePath = self::$commandViolationsFolder . strtolower($name) . '_violations.txt';
-        if (file_exists($filePath))
-        {
-            $fileData = file_get_contents($filePath);
-        } else {
-            $fileData = '';
-        }
+        $file = fopen($filePath, 'a');
         $dateFormat = date('[d/m/Y H-i-s]');
-        $fileData .= " \n \n$dateFormat: {$benchMark->getCommandFormat()} ends in {$time}ms";
-        Server::getInstance()->getScheduler()->scheduleAsyncTask(
-            new FileWriteTask($filePath, $fileData)
-        );
+        fwrite($file, " \n \n$dateFormat: {$benchMark->getCommandFormat()} ends in {$time}ms");
+        fclose($file);
     }
 
     /**
