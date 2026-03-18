@@ -116,7 +116,7 @@ final class SmartCommandAPI
      */
     public static function commandErrorLog(CommandSender $sender, Throwable $exception, string $formatUsed)
     {
-        self::errorLog("{$sender->getName()} execute {$formatUsed}:" . ((string) $exception), false);
+        self::errorLog("{$sender->getName()} execute {$formatUsed}: " . ((string) $exception), false);
     }
 
     /**
