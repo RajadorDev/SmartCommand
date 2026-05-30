@@ -4,16 +4,24 @@ declare (strict_types=1);
 
 /***
  *   
- * Rajador Developer
+ * Rajador Developer Diamond API
  * 
- * ▒█▀▀█ ░█▀▀█ ░░░▒█ ░█▀▀█ ▒█▀▀▄ ▒█▀▀▀█ ▒█▀▀█ 
- * ▒█▄▄▀ ▒█▄▄█ ░▄░▒█ ▒█▄▄█ ▒█░▒█ ▒█░░▒█ ▒█▄▄▀ 
- * ▒█░▒█ ▒█░▒█ ▒█▄▄█ ▒█░▒█ ▒█▄▄▀ ▒█▄▄▄█ ▒█░▒█
+ *  ██████╗  █████╗      ██╗ █████╗ ██████╗  ██████╗ ██████╗ 
+ *  ██╔══██╗██╔══██╗     ██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+ *  ██████╔╝███████║     ██║███████║██║  ██║██║   ██║██████╔╝
+ *  ██╔══██╗██╔══██║██   ██║██╔══██║██║  ██║██║   ██║██╔══██╗
+ *  ██║  ██║██║  ██║╚█████╔╝██║  ██║██████╔╝╚██████╔╝██║  ██║
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
  * 
- * GitHub: https://github.com/RajadorDev
+ * GitHub: https://github.com/rajadordev
  * 
  * Discord: rajadortv
  * 
+ * @copyright 2023 - 2027 Rajador Developer
+ * 
+ * Repository: https://github.com/rajadordev/SmartCommand
+ * 
+ * You can use AutoPluginUpdater to update SmartCommand automatically: https://github.com/rajadordev/AutoPluginUpdater
  * 
 **/
 
@@ -24,11 +32,11 @@ use SmartCommand\utils\CommandUtils;
 use pocketmine\command\CommandSender;
 use SmartCommand\message\CommandMessages;
 use SmartCommand\command\rule\CommandSenderRule;
+use SmartCommand\command\cooldown\CooldownSmartCommand;
 
 /**
- * I recommend that you register this rule as the last
+ * @deprecated Use @see CooldownSmartCommand
  */
-
 class CooldownRule implements CommandSenderRule
 {
 
@@ -85,21 +93,7 @@ class CooldownRule implements CommandSenderRule
 
     public function parse(CommandSender $sender, $command, int $executionType): bool
     {
-        if ($executionType === CommandSenderRule::RULE_PRE_EXECUTION)
-        {
-            if (!$this->inCooldown($sender))
-            {
-                if (!$this->addToCooldownWhenExecuted)
-                {
-                    $this->addToCooldown($sender);
-                }
-                return true;
-            }
-        } else if ($executionType === CommandSenderRule::RULE_EXECUTION) {
-            $this->addToCooldown($sender);
-            return true;
-        }
-        return false;
+        return !$this->inCooldown($sender);
     }
 
     public function getMessage($command, CommandSender $sender): string
@@ -110,11 +104,6 @@ class CooldownRule implements CommandSenderRule
     public static function secondsToMs(int $seconds) : int 
     {
         return $seconds * 1000;
-    }
-
-    public function getExecutionType(): int
-    {
-        return $this->addToCooldownWhenExecuted ? self::RULE_BOTH_EXECUTION : self::RULE_PRE_EXECUTION;
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-
+ 
 /***
  *   
  * Rajador Developer Diamond API
@@ -25,46 +25,35 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\rule;
+namespace SmartCommand\command;
 
 use pocketmine\command\CommandSender;
-use SmartCommand\command\SmartCommand;
-use SmartCommand\command\subcommand\SubCommand;
+use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\command\rule\CommandSenderRule;
+use SmartCommand\command\rule\defaults\CooldownRule;
+use SmartCommand\Loader;
 
-interface CommandSenderRule 
+/**
+ * @deprecated  Do not use this trait on your code
+ */
+trait DeprecatedCooldownRuleTrait 
 {
 
-    /** 
-     * @deprecated 
-     * Will be checked before the subcommands/arguments be processed (The first thing to be processed)
-     */
-    const RULE_PRE_EXECUTION = 0;
-
-    /** 
-     * @deprecated 
-     * Will be checked before onRun method, after arguments/subcommands be processed (before execute subcommands too) 
-     */
-    const RULE_EXECUTION = 1;
-
-    /** 
-     * @deprecated 
-     * Will be executed before and after (RULE_EXECUTION, RULE_PRE_EXECUTION)
-     */
-    const RULE_BOTH_EXECUTION = 2;
-
-    /**
-     * @param CommandSender $sender
-     * @param SmartCommand|SubCommand $command
-     * @param int $executionType @deprecated It will be removed
-     * @return boolean
-     */
-    public function parse(CommandSender $sender, $command, int $executionType) : bool;
-
-    /**
-     * @param SmartCommand|SubCommand $command
-     * @return string
-     */
-    public function getMessage($command, CommandSender $sender) : string;
     
-    
+    /** @var CooldownRule|null */
+    private $__smartCommandOldCooldownRule = null;
+
+    private function trySetCooldownRule(CommandSenderRule $rule)
+    {
+        if ($rule instanceof CooldownRule) {
+            $this->__smartCommandOldCooldownRule = $rule;
+        }
+    }
+
+    private function addToDeprecatedCooldown(CommandSender $sender)
+    {
+        if ($this->__smartCommandOldCooldownRule) {
+            $this->__smartCommandOldCooldownRule->addToCooldown($sender);
+        }
+    }
 }
