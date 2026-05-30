@@ -4,16 +4,24 @@ declare (strict_types=1);
 
 /***
  *   
- * Rajador Developer
+ * Rajador Developer Diamond API
  * 
- * ▒█▀▀█ ░█▀▀█ ░░░▒█ ░█▀▀█ ▒█▀▀▄ ▒█▀▀▀█ ▒█▀▀█ 
- * ▒█▄▄▀ ▒█▄▄█ ░▄░▒█ ▒█▄▄█ ▒█░▒█ ▒█░░▒█ ▒█▄▄▀ 
- * ▒█░▒█ ▒█░▒█ ▒█▄▄█ ▒█░▒█ ▒█▄▄▀ ▒█▄▄▄█ ▒█░▒█
+ *  ██████╗  █████╗      ██╗ █████╗ ██████╗  ██████╗ ██████╗ 
+ *  ██╔══██╗██╔══██╗     ██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+ *  ██████╔╝███████║     ██║███████║██║  ██║██║   ██║██████╔╝
+ *  ██╔══██╗██╔══██║██   ██║██╔══██║██║  ██║██║   ██║██╔══██╗
+ *  ██║  ██║██║  ██║╚█████╔╝██║  ██║██████╔╝╚██████╔╝██║  ██║
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
  * 
- * GitHub: https://github.com/RajadorDev
+ * GitHub: https://github.com/rajadordev
  * 
  * Discord: rajadortv
  * 
+ * @copyright 2023 - 2027 Rajador Developer
+ * 
+ * Repository: https://github.com/rajadordev/SmartCommand
+ * 
+ * You can use AutoPluginUpdater to update SmartCommand automatically: https://github.com/rajadordev/AutoPluginUpdater
  * 
 **/
 
@@ -28,7 +36,9 @@ use pocketmine\utils\TextFormat;
 use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\CommandArguments;
+use SmartCommand\command\DeprecatedCooldownRuleTrait;
 use SmartCommand\command\rule\CommandSenderRule;
+use SmartCommand\command\rule\defaults\CooldownRule;
 use SmartCommand\command\rule\defaults\PermissionCommandRule;
 use SmartCommand\command\rule\RulesHolderTrait;
 use SmartCommand\message\CommandMessages;
@@ -38,7 +48,13 @@ use Throwable;
 abstract class BaseSubCommand implements SubCommand
 {
 
-    use ArgumentableTrait, RulesHolderTrait;
+    use ArgumentableTrait;
+
+    use RulesHolderTrait {
+        RulesHolderTrait::registerRule as private internalRegisterRule;
+    }
+
+    use DeprecatedCooldownRuleTrait;
 
     /** @var string */
     protected $name, $description, $permission, $descriptionColor = TextFormat::GRAY;
@@ -131,25 +147,28 @@ abstract class BaseSubCommand implements SubCommand
     {
         $this->executionBenchmark->start();
         try {
-            if ($this->parseRules($sender, CommandSenderRule::RULE_PRE_EXECUTION))
+            if ($this->parseRules($sender))
             {
                 CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (is_int($argsNeedle = $this->getArgNeedleIndex()))
                 {
                     if (isset($args[$argsNeedle]))
                     {
-                        if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
+                        if ($this->formatArguments($args, $sender, $this->getMessages()))
                         {
                             $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
+                            $this->addToDeprecatedCooldown($sender);
                         }
                     } else {
                         $this->sendUsage($sender, $commandLabel, $subCommandLabel);
                     }
-                } else if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
+                } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
                     $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
+                    $this->addToDeprecatedCooldown($sender);
                 }
             }
         } catch (Throwable $error) {
+            $this->addToDeprecatedCooldown($sender);
             $format = "/{$commandLabel} {$subCommandLabel}";
             Server::getInstance()->getLogger()->error("Command execution error, {$sender->getName()} used: \"{$format}...\": " . ((string) $error));
             SmartCommandAPI::commandErrorLog($sender, $error, $format);
@@ -180,6 +199,12 @@ abstract class BaseSubCommand implements SubCommand
             $this->getCommand()->getMessages()->send($sender, CommandMessages::NOT_ALLOWED);
             return false; 
         }
+    }
+
+    protected function registerRule(CommandSenderRule $rule)
+    {
+        $this->trySetCooldownRule($rule);
+        $this->internalRegisterRule($rule);
     }
 
     /**

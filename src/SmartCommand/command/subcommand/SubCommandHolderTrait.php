@@ -4,16 +4,24 @@ declare (strict_types=1);
 
 /***
  *   
- * Rajador Developer
+ * Rajador Developer Diamond API
  * 
- * ▒█▀▀█ ░█▀▀█ ░░░▒█ ░█▀▀█ ▒█▀▀▄ ▒█▀▀▀█ ▒█▀▀█ 
- * ▒█▄▄▀ ▒█▄▄█ ░▄░▒█ ▒█▄▄█ ▒█░▒█ ▒█░░▒█ ▒█▄▄▀ 
- * ▒█░▒█ ▒█░▒█ ▒█▄▄█ ▒█░▒█ ▒█▄▄▀ ▒█▄▄▄█ ▒█░▒█
+ *  ██████╗  █████╗      ██╗ █████╗ ██████╗  ██████╗ ██████╗ 
+ *  ██╔══██╗██╔══██╗     ██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+ *  ██████╔╝███████║     ██║███████║██║  ██║██║   ██║██████╔╝
+ *  ██╔══██╗██╔══██║██   ██║██╔══██║██║  ██║██║   ██║██╔══██╗
+ *  ██║  ██║██║  ██║╚█████╔╝██║  ██║██████╔╝╚██████╔╝██║  ██║
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
  * 
- * GitHub: https://github.com/RajadorDev
+ * GitHub: https://github.com/rajadordev
  * 
  * Discord: rajadortv
  * 
+ * @copyright 2023 - 2027 Rajador Developer
+ * 
+ * Repository: https://github.com/rajadordev/SmartCommand
+ * 
+ * You can use AutoPluginUpdater to update SmartCommand automatically: https://github.com/rajadordev/AutoPluginUpdater
  * 
 **/
 
@@ -27,6 +35,9 @@ trait SubCommandHolderTrait
 
     /** @var array<string,SubCommand> */
     protected $subCommands = [];
+
+    /** @var array<string,SubCommand> */
+    protected $aliasesMap = [];
 
     /**
      * @param SubCommand $subCommand
@@ -46,6 +57,9 @@ trait SubCommandHolderTrait
         ) === 0)
         {
             $this->subCommands[strtolower($subcommand->getName())] = $subcommand;
+            foreach ($subcommand->getAliases() as $aliasName) {
+                $this->aliasesMap[strtolower($aliasName)] = $subcommand;
+            }
             return $this;
         }
         throw new PrepareCommandException('Sub-command label ' . implode(', ', $labels) . ' is already registered!');
@@ -71,18 +85,7 @@ trait SubCommandHolderTrait
     protected function fetchSubCommand(string $input)
     {
         $inputLowercase = strtolower($input);
-        if (isset($this->subCommands[$inputLowercase]))
-        {
-            return $this->subCommands[$inputLowercase];
-        }
-        foreach ($this->subCommands as $subCommand)
-        {
-            if ($subCommand->isReference($inputLowercase))
-            {
-                return $subCommand;
-            }
-        }
-        return null;
+        return $this->aliasesMap[$inputLowercase] ?? null;
     }
 
     /**

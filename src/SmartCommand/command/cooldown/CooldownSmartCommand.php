@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-
+ 
 /***
  *   
  * Rajador Developer Diamond API
@@ -25,47 +25,38 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\rule;
+namespace SmartCommand\command\cooldown;
 
 use pocketmine\command\CommandSender;
+use SmartCommand\command\CommandArguments;
+use SmartCommand\command\cooldown\rule\CheckCooldownRule;
+use SmartCommand\command\SmartCommand;
+use SmartCommand\message\CommandMessages;
 
-trait RulesHolderTrait
+abstract class CooldownSmartCommand extends SmartCommand implements ExecutableCooldown
 {
 
-    /** @var CommandSenderRule[] */
-    private $rules = [];
+    use ExecutableCooldownHolderTrait;
 
-    protected function registerRule(CommandSenderRule $rule)
+    public function __construct(string $name, string $description, string $usagePrefix = self::DEFAULT_USAGE_PREFIX, array $aliases = [], CommandMessages $messages = null)
     {
-        $this->rules[] = $rule;
+        $this->registerRule(new CheckCooldownRule($this));
+        return parent::__construct($name, $description, $usagePrefix, $aliases, $messages);
     }
 
     /**
-     * @param CommandSenderRule ...$rules
-     * @return void
+     * @param CommandSender $sender
+     * @param string $label
+     * @param CommandArguments $args
+     * @return CooldownResult
      */
-    protected function registerRules(CommandSenderRule ...$rules) 
-    {
-        foreach ($rules as $rule)
-        {
-            $this->registerRule($rule);
-        }
-    }
+    abstract protected function onAllowedRun(CommandSender $sender, string $label, CommandArguments $args) : CooldownResult;
 
-    public function getRules() : array 
-    {
-        return $this->rules;
-    }
 
-    protected function parseRules(CommandSender $sender) : bool 
+    final protected function onRun(CommandSender $sender, string $label, CommandArguments $args)
     {
-        foreach ($this->rules as $rule) {
-            if (!$rule->parse($sender, $this, CommandSenderRule::RULE_PRE_EXECUTION)) {
-                $sender->sendMessage($rule->getMessage($this, $sender));
-                return false;
-            }
-        }
-        return true;
+        $cooldownResult = $this->onAllowedRun($sender, $label, $args);
+        $this->applyCooldownResult($sender, $cooldownResult);
     }
 
 }

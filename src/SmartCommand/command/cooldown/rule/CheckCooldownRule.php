@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-
+ 
 /***
  *   
  * Rajador Developer Diamond API
@@ -25,47 +25,37 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\rule;
+namespace SmartCommand\command\cooldown\rule;
 
 use pocketmine\command\CommandSender;
+use SmartCommand\command\cooldown\ExecutableCooldown;
+use SmartCommand\command\rule\CommandSenderRule;
+use SmartCommand\message\CommandMessages;
 
-trait RulesHolderTrait
+class CheckCooldownRule implements CommandSenderRule
 {
 
-    /** @var CommandSenderRule[] */
-    private $rules = [];
+    /** @var ExecutableCooldown */
+    protected $command;
 
-    protected function registerRule(CommandSenderRule $rule)
+    public function __construct(ExecutableCooldown $command)
     {
-        $this->rules[] = $rule;
+        $this->command = $command;
     }
-
-    /**
-     * @param CommandSenderRule ...$rules
-     * @return void
-     */
-    protected function registerRules(CommandSenderRule ...$rules) 
+    
+    
+    public function parse(CommandSender $sender, $command, int $executionType): bool
     {
-        foreach ($rules as $rule)
-        {
-            $this->registerRule($rule);
-        }
-    }
-
-    public function getRules() : array 
-    {
-        return $this->rules;
-    }
-
-    protected function parseRules(CommandSender $sender) : bool 
-    {
-        foreach ($this->rules as $rule) {
-            if (!$rule->parse($sender, $this, CommandSenderRule::RULE_PRE_EXECUTION)) {
-                $sender->sendMessage($rule->getMessage($this, $sender));
-                return false;
-            }
+        if ($this->command->getCooldown($sender) !== null) {
+            return false;
         }
         return true;
     }
 
+    public function getMessage($command, CommandSender $sender): string
+    {
+        $cooldownTime = (float) $this->command->getCooldown($sender);
+        $cooldownTimeString = number_format(max(0.0, $cooldownTime), 2);
+        return $command->getMessages()->get(CommandMessages::SENDER_IN_COOLDOWN, '{cooldown}', $cooldownTimeString);
+    }
 }

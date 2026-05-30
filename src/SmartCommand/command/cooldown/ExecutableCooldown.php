@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-
+ 
 /***
  *   
  * Rajador Developer Diamond API
@@ -25,47 +25,29 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\rule;
+namespace SmartCommand\command\cooldown;
 
 use pocketmine\command\CommandSender;
 
-trait RulesHolderTrait
+interface ExecutableCooldown 
 {
 
-    /** @var CommandSenderRule[] */
-    private $rules = [];
-
-    protected function registerRule(CommandSenderRule $rule)
-    {
-        $this->rules[] = $rule;
-    }
+    /**
+     * @param CommandSender $sender
+     * @return boolean
+     */
+    public function inCooldown(CommandSender $sender) : bool;
 
     /**
-     * @param CommandSenderRule ...$rules
+     * @param CommandSender $sender
+     * @return float|null
+     */
+    public function getCooldown(CommandSender $sender);
+
+    /**
+     * @param CommandSender $sender
+     * @param integer $mileseconds
      * @return void
      */
-    protected function registerRules(CommandSenderRule ...$rules) 
-    {
-        foreach ($rules as $rule)
-        {
-            $this->registerRule($rule);
-        }
-    }
-
-    public function getRules() : array 
-    {
-        return $this->rules;
-    }
-
-    protected function parseRules(CommandSender $sender) : bool 
-    {
-        foreach ($this->rules as $rule) {
-            if (!$rule->parse($sender, $this, CommandSenderRule::RULE_PRE_EXECUTION)) {
-                $sender->sendMessage($rule->getMessage($this, $sender));
-                return false;
-            }
-        }
-        return true;
-    }
-
+    public function addToCooldown(CommandSender $sender, int $mileseconds);
 }
