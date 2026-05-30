@@ -4,16 +4,24 @@ declare (strict_types=1);
 
 /***
  *   
- * Rajador Developer
+ * Rajador Developer Diamond API
  * 
- * ▒█▀▀█ ░█▀▀█ ░░░▒█ ░█▀▀█ ▒█▀▀▄ ▒█▀▀▀█ ▒█▀▀█ 
- * ▒█▄▄▀ ▒█▄▄█ ░▄░▒█ ▒█▄▄█ ▒█░▒█ ▒█░░▒█ ▒█▄▄▀ 
- * ▒█░▒█ ▒█░▒█ ▒█▄▄█ ▒█░▒█ ▒█▄▄▀ ▒█▄▄▄█ ▒█░▒█
+ *  ██████╗  █████╗      ██╗ █████╗ ██████╗  ██████╗ ██████╗ 
+ *  ██╔══██╗██╔══██╗     ██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+ *  ██████╔╝███████║     ██║███████║██║  ██║██║   ██║██████╔╝
+ *  ██╔══██╗██╔══██║██   ██║██╔══██║██║  ██║██║   ██║██╔══██╗
+ *  ██║  ██║██║  ██║╚█████╔╝██║  ██║██████╔╝╚██████╔╝██║  ██║
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
  * 
- * GitHub: https://github.com/RajadorDev
+ * GitHub: https://github.com/rajadordev
  * 
  * Discord: rajadortv
  * 
+ * @copyright 2023 - 2027 Rajador Developer
+ * 
+ * Repository: https://github.com/rajadordev/SmartCommand
+ * 
+ * You can use AutoPluginUpdater to update SmartCommand automatically: https://github.com/rajadordev/AutoPluginUpdater
  * 
 **/
 
@@ -46,7 +54,13 @@ abstract class SmartCommand extends Command
 
     const DEFAULT_USAGE_PREFIX = " \n" . TextFormat::YELLOW . "§eUsage: ";
 
-    use ArgumentableTrait, SubCommandHolderTrait, RulesHolderTrait;
+    use ArgumentableTrait, SubCommandHolderTrait;
+
+    use RulesHolderTrait {
+        RulesHolderTrait::registerRule as private internalRegisterRule;
+    }
+
+    use DeprecatedCooldownRuleTrait;
 
     /** @var string */
     private $prefix = '';
@@ -105,7 +119,7 @@ abstract class SmartCommand extends Command
     {
         $this->executionBenchmark->start();
         try {
-            if ($this->parseRules($sender, CommandSenderRule::RULE_PRE_EXECUTION))
+            if ($this->parseRules($sender))
             {
                 CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
                 if (isset($args[0]))
@@ -116,27 +130,31 @@ abstract class SmartCommand extends Command
                         {
                             if (isset($args[$indexNeedle]))
                             {
-                                if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
+                                if ($this->formatArguments($args, $sender, $this->getMessages()))
                                 {
                                     $this->onRun($sender, $commandLabel, $this->makeArguments($args));
+                                    $this->addToDeprecatedCooldown($sender);
                                 }
                             } else {
                                 $this->sendUsage($sender, $commandLabel);
                             }
-                        } else if ($this->formatArguments($args, $sender, $this->getMessages()) && $this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
+                        } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
                             $this->onRun($sender, $commandLabel, $this->makeArguments($args));
+                            $this->addToDeprecatedCooldown($sender);
                         }
                     } 
                 } else if (is_int($this->getArgNeedleIndex())) {
                     $this->sendUsage($sender, $commandLabel);
-                } else if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION)) {
+                } else {
                     $this->onRun($sender, $commandLabel, $this->makeArguments($args));
+                    $this->addToDeprecatedCooldown($sender);
                 }
             }
         } catch (Throwable $error) {
             Server::getInstance()->getLogger()->error("Command /$commandLabel error: " . ((string) $error));
             SmartCommandAPI::commandErrorLog($sender, $error, '/' . $commandLabel);
             $this->messages->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
+            $this->addToDeprecatedCooldown($sender);
         }
         $this->executionBenchmark->stopIfStarted();
     }
@@ -199,11 +217,14 @@ abstract class SmartCommand extends Command
 
     protected function executeSubCommand(CommandSender $sender, SubCommand $subCommand, string $commandLabel, string $subCommandLabel, array $args)
     {
-        if ($this->parseRules($sender, CommandSenderRule::RULE_EXECUTION))
-        {
-            $this->executionBenchmark->stop();
-            $subCommand->execute($sender, $commandLabel, $subCommandLabel, $args);
-        }
+        $this->executionBenchmark->stop();
+        $subCommand->execute($sender, $commandLabel, $subCommandLabel, $args);
+    }
+
+    protected function registerRule(CommandSenderRule $rule)
+    {
+        $this->trySetCooldownRule($rule);
+        $this->internalRegisterRule($rule);
     }
 
     /**

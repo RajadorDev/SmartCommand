@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-
+ 
 /***
  *   
  * Rajador Developer Diamond API
@@ -25,29 +25,6 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\argument;
+namespace SmartCommand\command;
 
-class FloatArgument extends BaseArgument
-{
-
-    /**
-     * @param string $name
-     * @param boolean $required
-     * @param boolean $strict If true, will not convert integers to float
-     */
-    public function __construct(string $name, bool $required = true, bool $strict = false)
-    {
-        parent::__construct($name, 'float', $required, static function (string &$given) use ($strict) : bool {
-            if (is_numeric($given))
-            {
-                if (strpos($given, '.') === false && $strict)
-                {
-                    return false;
-                }
-                $given = (float) $given;
-                return true;
-            }
-            return false;
-        });
-    }
-}
+interface ExecutionResult {}
