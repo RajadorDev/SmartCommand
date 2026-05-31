@@ -4,7 +4,7 @@ declare (strict_types=1);
  
 /***
  *   
- * Rajador Developer Diamond API
+ * Rajador Developer 
  * 
  *  ██████╗  █████╗      ██╗ █████╗ ██████╗  ██████╗ ██████╗ 
  *  ██╔══██╗██╔══██╗     ██║██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
