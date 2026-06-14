@@ -1,0 +1,14 @@
+{
+    "name": "rajadordev/smartcommand-pm2",
+    "description": "A framework for pocketmine-2's commands",
+    "type": "library",
+    "authors": [
+        {
+            "name": "RajadorDev",
+            "email": "rajadordeveloper@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.5"
+    }
+}
