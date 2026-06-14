@@ -56,7 +56,8 @@ trait SubCommandHolderTrait
             )
         ) === 0)
         {
-            $this->subCommands[strtolower($subcommand->getName())] = $subcommand;
+            $subCommandLowercaseName = strtolower($subcommand->getName());
+            $this->subCommands[$subCommandLowercaseName] = $subcommand;
             foreach ($subcommand->getAliases() as $aliasName) {
                 $this->aliasesMap[strtolower($aliasName)] = $subcommand;
             }
@@ -85,7 +86,7 @@ trait SubCommandHolderTrait
     protected function fetchSubCommand(string $input)
     {
         $inputLowercase = strtolower($input);
-        return $this->aliasesMap[$inputLowercase] ?? null;
+        return $this->aliasesMap[$inputLowercase] ?? $this->subCommands[$inputLowercase] ?? null;
     }
 
     /**
