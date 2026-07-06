@@ -35,24 +35,6 @@ use SmartCommand\command\SmartCommand;
 final class CommandUtils 
 {
 
-    /**
-     * @param array<int,string> $args
-     * @param int|null $ignoreIndex
-     * @return string|null
-     */
-    public static function firstValidArgument(array &$args, $ignoreIndex = null) 
-    {
-        foreach ($args as $index => $argumentGiven) {
-            if ($index === $ignoreIndex) {
-                return null;
-            }
-
-            if ($argumentGiven !== '') {
-                return $argumentGiven;
-            }
-        }
-        return null;
-    }
 
     /**
      * It will remove every strings with none content
@@ -63,17 +45,21 @@ final class CommandUtils
      */
     public static function removeEmptyArgs(array &$args, $ignoreIndexFrom = null) 
     {
-        $newArguments = [];
+        $wasChanged = false;
         foreach ($args as $index => $argumentGiven) {
             if ($ignoreIndexFrom !== null && $index >= $ignoreIndexFrom) {
                 break;
             }
 
-            if ($argumentGiven !== '') {
-                $newArguments[] = $argumentGiven;
+            if ($argumentGiven === '') {
+                unset($args[$index]);
+                $wasChanged = true;
             }
         }
-        $args = $newArguments;
+
+        if ($wasChanged) {
+            $args = array_values($args);
+        }
     }
 
     /**
@@ -82,6 +68,7 @@ final class CommandUtils
      * @param CommandSender $sender
      * @param string $messageWhenFail if not be passed, no message will be sent
      * @return boolean
+     * @deprecated Useless
      */
     public static function playerParse(CommandSender $sender, string $messageWhenFail = null) : bool 
     {
@@ -138,22 +125,33 @@ final class CommandUtils
     }
 
     /**
-     * @param array $texts
-     * @param boolean $returnText If false will return string[]
+     * @param array $lines
+     * @param boolean $returnText
      * @param string $prefix
-     * @return string|string[]
+     * @return string[]|string
      */
-    public static function textLinesWithPrefix(array $texts, bool $returnText = true, string $prefix = '§8-  §7')
+    public static function textLinesWithPrefix(array $lines, bool $returnText = true, string $prefix = '§8-  §7')
     {
-        $text = array_map(
-            static function (string $text) use ($prefix) : string {
-                return $prefix . $text;
-            },
-            $texts
-        );
-        if ($returnText)
-        {
-            return implode("\n", $text);
+        if ($returnText) {
+            return self::textLinesWithPrefixString($lines, $prefix);
+        }
+        return self::textLinesWithPrefixArray($lines, $prefix);
+    }
+
+    public static function textLinesWithPrefixArray(array $lines, string $prefix = '§8-  §7') : array
+    {
+        foreach ($lines as $lineIndex => $textLine) {
+            $lines[$lineIndex] = $prefix . $textLine;
+        }
+        return $lines;
+    }
+
+    public static function textLinesWithPrefixString(array $lines, string $prefix = '§8-  §7') : string
+    {
+        $text = '';
+        foreach ($lines as $textLine) {
+            $textLine = $prefix . $textLine;
+            $text .= $text !== '' ? "\n$textLine" : $textLine;
         }
         return $text;
     }

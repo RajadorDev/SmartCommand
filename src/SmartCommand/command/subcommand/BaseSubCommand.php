@@ -170,12 +170,12 @@ abstract class BaseSubCommand implements SubCommand
         $argumentNeedleIndex = $this->getArgNeedleIndex();
         $needSomeArgumentRequired = is_int($argumentNeedleIndex);
 
-        CommandUtils::removeEmptyArgs($args, $textArgumentIndex === null ? $this->lastArgumentPosition : $textArgumentIndex);
-
         $ignoreArgumentIndex = $textArgumentIndex;
         if ($ignoreArgumentIndex === null) {
             $ignoreArgumentIndex = $this->lastArgumentPosition === null ? 0 : ($this->lastArgumentPosition + 1);
         }
+
+        CommandUtils::removeEmptyArgs($args, $ignoreArgumentIndex);
 
         if ($needSomeArgumentRequired && !isset($args[$argumentNeedleIndex])) {
             $this->sendUsage($sender, $commandLabel, $subCommandLabel);

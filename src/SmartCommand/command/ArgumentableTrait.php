@@ -131,12 +131,11 @@ trait ArgumentableTrait
         $found = null;
         foreach ($this->arguments as $index => $argument)
         {
-            if ($argument->isRequired())
+            if ($argument->isRequired() && (is_null($found) || $found < $index))
             {
                 $found = $index;
                 continue;
             } 
-            break;
         }
         $this->argumentNeedleIndex = $found;
     }
@@ -226,8 +225,9 @@ trait ArgumentableTrait
                 if ($argumentIndex === $textArgumentIndex) {
                     break;
                 }
-            }
 
+                continue;
+            }
             break;
         }
 

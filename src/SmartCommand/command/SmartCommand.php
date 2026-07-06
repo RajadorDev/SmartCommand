@@ -151,11 +151,6 @@ abstract class SmartCommand extends Command
         $argumentNeedleIndex = $this->getArgNeedleIndex();
         $needSomeArgumentRequired = is_int($argumentNeedleIndex);
 
-        $firstArgumentGiven = CommandUtils::firstValidArgument($args, 1);
-
-        if ($firstArgumentGiven !== null && $this->tryExecuteSubCommand($sender, $firstArgumentGiven, $args)) {
-            return;
-        }
 
         $ignoreArgumentIndex = $textArgumentIndex;
         if ($ignoreArgumentIndex === null) {
@@ -163,6 +158,12 @@ abstract class SmartCommand extends Command
         }
 
         CommandUtils::removeEmptyArgs($args, $ignoreArgumentIndex);
+
+        $firstArgumentGiven = $args[0] ?? null;
+
+        if ($firstArgumentGiven !== null && $this->tryExecuteSubCommand($sender, $firstArgumentGiven, $args)) {
+            return;
+        }
 
         if ($needSomeArgumentRequired && !isset($args[$argumentNeedleIndex])) {
             $this->sendUsage($sender, $commandLabel);

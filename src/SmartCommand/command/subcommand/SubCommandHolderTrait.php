@@ -130,7 +130,7 @@ trait SubCommandHolderTrait
      */
     protected function tryExecuteSubCommand(CommandSender $sender, string $label, array $args) : bool
     {
-        if (count($this->subCommands) > 0)
+        if (!empty($this->subCommands))
         {
             if (isset($args[0]))
             {
