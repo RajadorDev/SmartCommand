@@ -36,6 +36,25 @@ final class CommandUtils
 {
 
     /**
+     * @param array<int,string> $args
+     * @param int|null $ignoreIndex
+     * @return string|null
+     */
+    public static function firstValidArgument(array &$args, $ignoreIndex = null) 
+    {
+        foreach ($args as $index => $argumentGiven) {
+            if ($index === $ignoreIndex) {
+                return null;
+            }
+
+            if ($argumentGiven !== '') {
+                return $argumentGiven;
+            }
+        }
+        return null;
+    }
+
+    /**
      * It will remove every strings with none content
      *
      * @param array $args
@@ -44,15 +63,17 @@ final class CommandUtils
      */
     public static function removeEmptyArgs(array &$args, $ignoreIndexFrom = null) 
     {
-        $args = array_values(
-            array_filter(
-                $args,
-                static function (string $text, int $key) use ($ignoreIndexFrom) : bool {
-                    return (trim($text) != '' || (is_null($ignoreIndexFrom) || $key >= $ignoreIndexFrom));
-                },
-                ARRAY_FILTER_USE_BOTH
-            )
-        );
+        $newArguments = [];
+        foreach ($args as $index => $argumentGiven) {
+            if ($ignoreIndexFrom !== null && $index >= $ignoreIndexFrom) {
+                break;
+            }
+
+            if ($argumentGiven !== '') {
+                $newArguments[] = $argumentGiven;
+            }
+        }
+        $args = $newArguments;
     }
 
     /**

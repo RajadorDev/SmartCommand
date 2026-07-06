@@ -33,6 +33,9 @@ use SmartCommand\command\argument\TextArgument;
 use SmartCommand\message\CommandMessages;
 use SmartCommand\utils\PrepareCommandException;
 
+/**
+ * @phpstan-type ArgumentsFormatted array<int|string,mixed>
+ */
 trait ArgumentableTrait 
 {
 
@@ -44,6 +47,18 @@ trait ArgumentableTrait
 
     /** @var string */
     protected $argumentsDescription = '';
+
+    /** @var integer|null */
+    protected $textArgumentIndex = null;
+
+    /** @var integer|null */
+    protected $argumentNeedleIndex = null;
+
+    /** @var string|null */
+    protected $cachedGeneratedArgumentsList = null;
+
+    /** @var integer|null */
+    protected $lastArgumentPosition = null;
 
     /**
      * @param integer $position
@@ -63,6 +78,7 @@ trait ArgumentableTrait
                     {
                         $this->arguments[$position] = $argument;
                         $this->requiredMap[$argument->getName()] = $argument->isRequired();
+                        $this->onArgumentRegistered($position, $argument);
                         return $this;
                     } else {
                         throw new PrepareCommandException("Argument $position can't be in this position without a previous argument");
@@ -76,6 +92,16 @@ trait ArgumentableTrait
             }
         }
         throw new PrepareCommandException("$position argument already is registered!");
+    }
+
+    protected function onArgumentRegistered(int $indexPosition, Argument $argument) 
+    {
+        if ($argument instanceof TextArgument) {
+            $this->textArgumentIndex = $indexPosition;
+        }
+        $this->updateArgumentsNeedleIndex();
+        $this->cachedGeneratedArgumentsList = null;
+        $this->lastArgumentPosition = $indexPosition;
     }
 
     /**
@@ -97,20 +123,10 @@ trait ArgumentableTrait
      */
     protected function getTextArgumentIndex() 
     {
-        foreach ($this->arguments as $index => $argument)
-        {
-            if ($argument instanceof TextArgument)
-            {
-                return $index;
-            }
-        }
-        return null;
+        return $this->textArgumentIndex;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getArgNeedleIndex()
+    protected function updateArgumentsNeedleIndex()
     {
         $found = null;
         foreach ($this->arguments as $index => $argument)
@@ -122,7 +138,15 @@ trait ArgumentableTrait
             } 
             break;
         }
-        return $found;
+        $this->argumentNeedleIndex = $found;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getArgNeedleIndex()
+    {
+        return $this->argumentNeedleIndex;
     }
 
     public function hasNonRequiredArgument() : bool 
@@ -137,15 +161,16 @@ trait ArgumentableTrait
 
     public function generateArgumentsList(string $command, CommandMessages $messages, bool $includeDescription = true, bool $raw = false) : string
     {
-        $list = [];
-        foreach ($this->arguments as $argument)
-        {
-            $list[] = $argument->getFormat($messages);
-        }
-        $list = implode(' ', $list);
-        if ($list !== '')
-        {
-            $list = ' ' . $list;
+        if ($this->cachedGeneratedArgumentsList === null) {
+            $list = '';
+            if (!empty($this->arguments)) {
+                foreach ($this->arguments as $argument) {
+                    $list .= ' ' . $argument->getFormat($messages);
+                }
+            }
+            $this->cachedGeneratedArgumentsList = $list;
+        } else {
+            $list = $this->cachedGeneratedArgumentsList;
         }
         $format = "/$command{$list}" . (($includeDescription && $this->argumentsDescription != '') ? " $this->argumentsDescription" : '');
         if (!$raw)
@@ -164,36 +189,50 @@ trait ArgumentableTrait
         return $this->arguments[$index] ?? null;
     }
 
+
+    /**
+     * @param array<int,string> $args
+     * @param CommandSender $sender
+     * @param CommandMessages $messages
+     * @param boolean $sendErrorMessage
+     * @return boolean
+     * @param-out ArgumentsFormatted $args
+     */
     protected function formatArguments(array &$args, CommandSender $sender, CommandMessages $messages, bool $sendErrorMessage = true) : bool 
     {
-        $realArgs = $args;
-        foreach ($args as $index => $argumentSenderValue)
-        {
-            if ($argument = $this->getArgument($index))
-            {
-                if ($argument instanceof TextArgument)
-                {
-                    $argumentSenderValue = implode(' ', array_slice($realArgs, $index));
+        /** @var ArgumentsFormatted */
+        $argumentsResult = $args;
+        $textArgumentIndex = $this->getTextArgumentIndex();
+        foreach ($args as $argumentIndex => $argumentGiven) {
+            if ($argument = $this->getArgument($argumentIndex)) {
+
+
+                if ($argumentIndex === $textArgumentIndex) {
+                    $argumentGiven = implode(' ', array_slice($args, $argumentIndex));
                 }
-                if ($argument->parse($argumentSenderValue))
-                {
-                    $args[$argument->getName()] = $argumentSenderValue;
-                    unset($args[$index]);
-                } else {
-                    if ($sendErrorMessage)
-                    {
-                        $message = $argument->getWrongMessage($messages, $argumentSenderValue);
-                        $sender->sendMessage($message);
+
+                $argumentResult = $argumentGiven;
+                if (!$argument->parse($argumentResult)) {
+                    if ($sendErrorMessage) {
+                        $sender->sendMessage($argument->getWrongMessage($messages, $argumentGiven));
                     }
                     return false;
                 }
-                continue;
+
+
+                unset($argumentsResult[$argumentIndex]);
+                $argumentsResult[$argument->getName()] = $argumentResult;
+                
+                if ($argumentIndex === $textArgumentIndex) {
+                    break;
+                }
             }
-            $realArgs = array_merge($realArgs, array_slice($args, $index));
+
             break;
         }
+
+        $args = $argumentsResult;
         return true;
     }
-
     
 }

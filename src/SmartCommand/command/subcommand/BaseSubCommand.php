@@ -146,27 +146,9 @@ abstract class BaseSubCommand implements SubCommand
     public function execute(CommandSender $sender, string $commandLabel, string $subCommandLabel, array $args)
     {
         $this->executionBenchmark->start();
+
         try {
-            if ($this->parseRules($sender))
-            {
-                CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
-                if (is_int($argsNeedle = $this->getArgNeedleIndex()))
-                {
-                    if (isset($args[$argsNeedle]))
-                    {
-                        if ($this->formatArguments($args, $sender, $this->getMessages()))
-                        {
-                            $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
-                            $this->addToDeprecatedCooldown($sender);
-                        }
-                    } else {
-                        $this->sendUsage($sender, $commandLabel, $subCommandLabel);
-                    }
-                } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
-                    $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
-                    $this->addToDeprecatedCooldown($sender);
-                }
-            }
+            $this->internalExecuteSubCommand($sender, $commandLabel, $subCommandLabel, $args);
         } catch (Throwable $error) {
             $this->addToDeprecatedCooldown($sender);
             $format = "/{$commandLabel} {$subCommandLabel}";
@@ -174,7 +156,37 @@ abstract class BaseSubCommand implements SubCommand
             SmartCommandAPI::commandErrorLog($sender, $error, $format);
             $this->getMessages()->send($sender, CommandMessages::GENERIC_INTERNAL_ERROR);
         }
+
         $this->executionBenchmark->stop();
+    }
+
+    final protected function internalExecuteSubCommand(CommandSender $sender, string $commandLabel, string $subCommandLabel, array $args)
+    {
+        if (!$this->parseRules($sender)) {
+            return;
+        }
+
+        $textArgumentIndex = $this->getTextArgumentIndex();
+        $argumentNeedleIndex = $this->getArgNeedleIndex();
+        $needSomeArgumentRequired = is_int($argumentNeedleIndex);
+
+        CommandUtils::removeEmptyArgs($args, $textArgumentIndex === null ? $this->lastArgumentPosition : $textArgumentIndex);
+
+        $ignoreArgumentIndex = $textArgumentIndex;
+        if ($ignoreArgumentIndex === null) {
+            $ignoreArgumentIndex = $this->lastArgumentPosition === null ? 0 : ($this->lastArgumentPosition + 1);
+        }
+
+        if ($needSomeArgumentRequired && !isset($args[$argumentNeedleIndex])) {
+            $this->sendUsage($sender, $commandLabel, $subCommandLabel);
+            return;
+        }
+
+        if ($this->formatArguments($args, $sender, $this->getMessages(), true)) {
+            $this->onRun($sender, $commandLabel, $subCommandLabel, $this->makeArguments($args));
+            $this->addToDeprecatedCooldown($sender);
+        }
+
     }
 
     public function getExecutionBenchmark() : SmartCommandBenchmark

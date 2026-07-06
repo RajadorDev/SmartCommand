@@ -39,6 +39,9 @@ trait SubCommandHolderTrait
     /** @var array<string,SubCommand> */
     protected $aliasesMap = [];
 
+    /** @var integer|null */
+    protected $highestSubcommandsArgumentIndex = null;
+
     /**
      * @param SubCommand $subCommand
      * @return self
@@ -61,6 +64,7 @@ trait SubCommandHolderTrait
             foreach ($subcommand->getAliases() as $aliasName) {
                 $this->aliasesMap[strtolower($aliasName)] = $subcommand;
             }
+            $this->onRegisterSubCommand($subcommand);
             return $this;
         }
         throw new PrepareCommandException('Sub-command label ' . implode(', ', $labels) . ' is already registered!');
@@ -78,6 +82,9 @@ trait SubCommandHolderTrait
         }
         return $this;
     }
+
+    protected function onRegisterSubCommand(SubCommand $subCommand)
+    {}
 
     /**
      * @param string $input

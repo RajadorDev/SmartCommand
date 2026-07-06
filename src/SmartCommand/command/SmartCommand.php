@@ -115,41 +115,17 @@ abstract class SmartCommand extends Command
         return $this->messages;
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $commandLabel
+     * @param array $args
+     * @return void
+     */
     final public function execute(CommandSender $sender, $commandLabel, array $args)
     {
         $this->executionBenchmark->start();
         try {
-            if ($this->parseRules($sender))
-            {
-                CommandUtils::removeEmptyArgs($args, $this->getTextArgumentIndex());
-                if (isset($args[0]))
-                {
-                    if (!$this->tryExecuteSubCommand($sender, $commandLabel, $args))
-                    {
-                        if (is_int($indexNeedle = $this->getArgNeedleIndex()))
-                        {
-                            if (isset($args[$indexNeedle]))
-                            {
-                                if ($this->formatArguments($args, $sender, $this->getMessages()))
-                                {
-                                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
-                                    $this->addToDeprecatedCooldown($sender);
-                                }
-                            } else {
-                                $this->sendUsage($sender, $commandLabel);
-                            }
-                        } else if ($this->formatArguments($args, $sender, $this->getMessages())) {
-                            $this->onRun($sender, $commandLabel, $this->makeArguments($args));
-                            $this->addToDeprecatedCooldown($sender);
-                        }
-                    } 
-                } else if (is_int($this->getArgNeedleIndex())) {
-                    $this->sendUsage($sender, $commandLabel);
-                } else {
-                    $this->onRun($sender, $commandLabel, $this->makeArguments($args));
-                    $this->addToDeprecatedCooldown($sender);
-                }
-            }
+            $this->internalExecuteCommand($sender, $commandLabel, $args);
         } catch (Throwable $error) {
             Server::getInstance()->getLogger()->error("Command /$commandLabel error: " . ((string) $error));
             SmartCommandAPI::commandErrorLog($sender, $error, '/' . $commandLabel);
@@ -157,6 +133,47 @@ abstract class SmartCommand extends Command
             $this->addToDeprecatedCooldown($sender);
         }
         $this->executionBenchmark->stopIfStarted();
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param string $commandLabel
+     * @param array $args
+     * @return void
+     */
+    final protected function internalExecuteCommand(CommandSender $sender, string $commandLabel, array $args) 
+    {
+        if (!$this->parseRules($sender)) {
+            return;
+        }
+
+        $textArgumentIndex = $this->getTextArgumentIndex();
+        $argumentNeedleIndex = $this->getArgNeedleIndex();
+        $needSomeArgumentRequired = is_int($argumentNeedleIndex);
+
+        $firstArgumentGiven = CommandUtils::firstValidArgument($args, 1);
+
+        if ($firstArgumentGiven !== null && $this->tryExecuteSubCommand($sender, $firstArgumentGiven, $args)) {
+            return;
+        }
+
+        $ignoreArgumentIndex = $textArgumentIndex;
+        if ($ignoreArgumentIndex === null) {
+            $ignoreArgumentIndex = $this->lastArgumentPosition === null ? 0 : ($this->lastArgumentPosition + 1);
+        }
+
+        CommandUtils::removeEmptyArgs($args, $ignoreArgumentIndex);
+
+        if ($needSomeArgumentRequired && !isset($args[$argumentNeedleIndex])) {
+            $this->sendUsage($sender, $commandLabel);
+            return;
+        }
+
+        if ($this->formatArguments($args, $sender, $this->messages, true)) {
+            $this->onRun($sender, $commandLabel, $this->makeArguments($args));
+            $this->addToDeprecatedCooldown($sender);
+        }
+
     }
 
     public function getExecutionBenchmark() : SmartCommandBenchmark
@@ -187,7 +204,7 @@ abstract class SmartCommand extends Command
                 static function (string $usageLine) : string {
                     return $usageLine;
                 },
-                $this->generateUsageList($label,$sender, $page, $maxPerPage)
+                $this->generateUsageList($label, $sender, $page, $maxPerPage)
             )
         );
     }
@@ -228,7 +245,7 @@ abstract class SmartCommand extends Command
     }
 
     /**
-     * Called after __construct
+     * Called inside __construct method
      * @return void
      */
     abstract protected function prepare();
