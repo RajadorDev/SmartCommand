@@ -63,7 +63,7 @@ trait ArgumentableTrait
     /**
      * @param integer $position
      * @param Argument $argument
-     * @return self
+     * @return $this
      * @throws PrepareCommandException
      */
     protected function registerArgument(int $position, Argument $argument)
@@ -106,7 +106,7 @@ trait ArgumentableTrait
 
     /**
      * @param array<int,Argument> $arguments
-     * @return self
+     * @return $this
      * @throws PrepareCommandException
      */
     protected function registerArguments(array $arguments)
