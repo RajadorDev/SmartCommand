@@ -224,6 +224,7 @@ You can register command for method `registerBuild()` more fast and easy.
 ```php
 
 use pocketmine\plugin\PluginBase;
+use SmartCommand\api\SmartCommandAPI;
 
 class Loader extends PluginBase
 {
@@ -233,8 +234,8 @@ class Loader extends PluginBase
         SmartCommandAPI::registerBuild(SayCommand::class)
             ->setName('say')
             ->setDescription('Hello world')
-            ->setAliases([]'talk']);
-        ->build();
+            ->setAliases(['talk']);
+        ->build('talk-prefix');
     }
 }
 ```
