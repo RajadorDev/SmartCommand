@@ -2,6 +2,9 @@
     "name": "rajadordev/smartcommand-pm2",
     "description": "A framework for pocketmine-2's commands",
     "type": "library",
+    "autoload": {
+        "psr-4": { "SmartCommand\\": "src/SmartCommand" }
+    },
     "authors": [
         {
             "name": "RajadorDev",
