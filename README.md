@@ -214,3 +214,28 @@ class PopupSubCommand extends BaseSubCommand
     }
 }
 ```
+
+### CommandBuild
+
+You can register command for method `registerBuild()` more fast and easy.
+
+**Example:**
+
+```php
+
+use pocketmine\plugin\PluginBase;
+use SmartCommand\api\SmartCommandAPI;
+
+class Loader extends PluginBase
+{
+
+    public function onEnable() 
+    {
+        SmartCommandAPI::registerBuild(SayCommand::class)
+            ->setName('say')
+            ->setDescription('Hello world')
+            ->setAliases(['talk']);
+        ->build('talk-prefix');
+    }
+}
+```

@@ -27,6 +27,7 @@ declare (strict_types=1);
 
 namespace SmartCommand\api;
 
+use SmartCommand\utils\CommandBuild;
 use Throwable;
 use pocketmine\Server;
 use SmartCommand\Loader;
@@ -103,6 +104,25 @@ final class SmartCommandAPI
     public static function register(string $prefix, SmartCommand $command)
     {
         Server::getInstance()->getCommandMap()->register($prefix, $command);
+    }
+
+    /**
+     * @param class-string $commandClass
+     * @return CommandBuild
+     */
+    public static function registerBuild(string $commandClass)
+    {
+        if (!class_exists($commandClass)) 
+        {
+            throw new \ClassNotFoundException("Class $commandClass not found");
+        }
+
+        if ($commandClass instanceof SmartCommand) 
+        {
+            throw new \Exception("Class $commandClass isn't instance of SmartCommand");
+        }
+
+        return (new CommandBuild($commandClass));
     }
 
     /**
