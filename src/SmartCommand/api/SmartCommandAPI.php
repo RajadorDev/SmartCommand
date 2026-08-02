@@ -27,7 +27,7 @@ declare (strict_types=1);
 
 namespace SmartCommand\api;
 
-use SmartCommand\utils\CommandBuild;
+use InvalidArgumentException;
 use Throwable;
 use pocketmine\Server;
 use SmartCommand\Loader;
@@ -37,6 +37,7 @@ use SmartCommand\command\SmartCommand;
 use SmartCommand\api\command\FrameworkCommand;
 use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\subcommand\BaseSubCommand;
+use SmartCommand\utils\CommandBuilder;
 
 final class SmartCommandAPI
 {
@@ -107,22 +108,23 @@ final class SmartCommandAPI
     }
 
     /**
-     * @param class-string $commandClass
-     * @return CommandBuild
+     * @param class-string<SmartCommand> $commandClass
+     * @return CommandBuilder
+     * @throws \ClassNotFoundException|InvalidArgumentException
      */
-    public static function registerBuild(string $commandClass)
+    public static function makeCommandBuilder(string $commandClass) : CommandBuilder
     {
         if (!class_exists($commandClass)) 
         {
             throw new \ClassNotFoundException("Class $commandClass not found");
         }
 
-        if ($commandClass instanceof SmartCommand) 
+        if (!($commandClass instanceof SmartCommand)) 
         {
-            throw new \Exception("Class $commandClass isn't instance of SmartCommand");
+            throw new InvalidArgumentException("Class $commandClass isn't instance of SmartCommand");
         }
 
-        return (new CommandBuild($commandClass));
+        return new CommandBuilder($commandClass);
     }
 
     /**

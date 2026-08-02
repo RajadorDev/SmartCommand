@@ -28,13 +28,13 @@ declare (strict_types=1);
 namespace SmartCommand\command\callback\builder;
 
 use pocketmine\command\CommandSender;
-use SmartCommand\command\callback\CallbackCooldownSmartCommand;
-use SmartCommand\command\callback\CallbackSmartCommand;
+use SmartCommand\command\builder\BuildErrorList;
 use SmartCommand\command\callback\subcommand\CallbackCooldownSubCommand;
 use SmartCommand\command\callback\subcommand\CallbackSubCommand;
+use SmartCommand\command\CommandArguments;
+use SmartCommand\command\cooldown\CooldownResult;
 use SmartCommand\command\SmartCommand;
 use SmartCommand\command\subcommand\SubCommand;
-use SmartCommand\command\subcommand\SubCommandHolderTrait;
 
 class SubCommandCallbackBuilder extends ExecutableCallbackBuilder
 {
@@ -58,7 +58,7 @@ class SubCommandCallbackBuilder extends ExecutableCallbackBuilder
         if ($this->closure) {
             $closureCheckClass = $this->useCooldown ? CallbackCooldownSubCommand::class : CallbackSubCommand::class;
 
-            if ($closureCheckClass::validateClosure($this->closure)) {
+            if (!$closureCheckClass::validateClosure($this->closure)) {
                 $errors->push("Invalid closure structure for " . $closureCheckClass . ' class');
             }
         }
@@ -114,6 +114,15 @@ class SubCommandCallbackBuilder extends ExecutableCallbackBuilder
             $this->getRules(),
             $this->arguments
         );
+    }
+
+    /**
+     * @param callable(CommandSender $sender, string $commandLabel, string $subCommandLabel, CommandArguments $args)|callable(CommandSender $sender, string $commandLabel, string $subCommandLabel, CommandArguments $args):CooldownResult $closure
+     * @return ExecutableCallbackBuilder
+     */
+    public function listen(callable $closure): ExecutableCallbackBuilder
+    {
+        return parent::listen($closure);
     }
 
     protected function putAditionalParams($command)

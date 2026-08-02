@@ -25,20 +25,33 @@ declare (strict_types=1);
  * 
 **/
 
-namespace SmartCommand\command\callback\builder\utils;
+namespace SmartCommand\command\builder;
 
-use RuntimeException;
-use SmartCommand\command\callback\builder\BuildErrorList;
-use SmartCommand\utils\CommandUtils;
-
-class CallbackBuildFailException extends RuntimeException
+class BuildErrorList
 {
-   
-    public function __construct(BuildErrorList $errors)
+
+    /** @var string[] */
+    public $errors;
+
+    /**
+     * @param array $errors
+     */
+    public function __construct(
+        array $errors
+    )
     {
-        parent::__construct(
-            implode(';  ', $errors->errors)
-        );
+        $this->errors = $errors;
     }
-    
+
+    public function push(string $message) : BuildErrorList
+    {
+        $this->errors[] = $message;
+        return $this;
+    }
+
+    public function hasSomeError() : bool 
+    {
+        return count($this->errors) !== 0;
+    }
+
 }

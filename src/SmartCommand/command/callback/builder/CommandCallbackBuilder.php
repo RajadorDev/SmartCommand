@@ -29,6 +29,7 @@ namespace SmartCommand\command\callback\builder;
 
 use pocketmine\command\CommandSender;
 use SmartCommand\api\SmartCommandAPI;
+use SmartCommand\command\builder\BuildErrorList;
 use SmartCommand\command\callback\CallbackCooldownSmartCommand;
 use SmartCommand\command\callback\CallbackSmartCommand;
 use SmartCommand\command\subcommand\SubCommand;

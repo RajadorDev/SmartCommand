@@ -77,6 +77,7 @@ class CallbackCooldownSubCommand extends CooldownBaseSubCommand
 
     public static function validateClosure(callable $closure): bool
     {
+
         $type_A = CallbackType::createFromCallable(
             function (CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args) : CooldownResult {
                 return CooldownResult::IGNORE();
@@ -84,11 +85,11 @@ class CallbackCooldownSubCommand extends CooldownBaseSubCommand
         );
 
         $type_B = CallbackType::createFromCallable(
-            function (CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args, CallbackCooldownSubCommand $subcommand) : CooldownResult {
+            function (CommandSender $sender, string $commandLabel, string $subcommandLabel, CommandArguments $args, CallbackCooldownSubCommand $subCommand) : CooldownResult {
                 return CooldownResult::IGNORE();
             }
         );
 
-        return $type_A->isSatisfiedBy($closure) || $type_B->isSatisfiedBy($closure);
+        return ($type_A->isSatisfiedBy($closure) || $type_B->isSatisfiedBy($closure));
     }
 }

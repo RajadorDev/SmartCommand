@@ -29,8 +29,9 @@ namespace SmartCommand\command\callback\builder;
 
 use InvalidArgumentException;
 use RuntimeException;
-use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\command\ArgumentableTrait;
+use SmartCommand\command\builder\BuildErrorList;
+use SmartCommand\command\builder\CommandBuildFailException;
 use SmartCommand\command\callback\builder\utils\CallbackBuildFailException;
 use SmartCommand\command\rule\RulesHolderTrait;
 use SmartCommand\command\SmartCommand;
@@ -162,7 +163,7 @@ abstract class ExecutableCallbackBuilder
         $checkErrorsResult = $this->checkBuildErrors();
 
         if ($checkErrorsResult->hasSomeError()) {
-            throw new CallbackBuildFailException($checkErrorsResult);
+            throw new CommandBuildFailException($checkErrorsResult);
         }
 
         $created = $this->create();
