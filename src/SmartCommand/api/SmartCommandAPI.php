@@ -37,7 +37,7 @@ use SmartCommand\command\SmartCommand;
 use SmartCommand\api\command\FrameworkCommand;
 use SmartCommand\benchmark\SmartCommandBenchmark;
 use SmartCommand\command\subcommand\BaseSubCommand;
-use SmartCommand\utils\CommandBuilder;
+use SmartCommand\command\builder\CommandBuilder;
 
 final class SmartCommandAPI
 {
@@ -119,7 +119,7 @@ final class SmartCommandAPI
             throw new \ClassNotFoundException("Class $commandClass not found");
         }
 
-        if (!($commandClass instanceof SmartCommand)) 
+        if (!is_a($commandClass, SmartCommand::class, true)) 
         {
             throw new InvalidArgumentException("Class $commandClass isn't instance of SmartCommand");
         }
