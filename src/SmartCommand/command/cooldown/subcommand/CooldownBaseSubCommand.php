@@ -19,9 +19,9 @@ declare (strict_types=1);
  * 
  * @copyright 2023 - 2027 Rajador Developer
  * 
- * This system is protected by laws! Anyone who shares or resells it will be held accountable
- *
- * Edição, compartilhamento ou revenda é proibido por LEI! Quem fizer será responsabilizado judicialmente
+ * Repository: https://github.com/rajadordev/SmartCommand
+ * 
+ * You can use AutoPluginUpdater to update SmartCommand automatically: https://github.com/rajadordev/AutoPluginUpdater
  * 
 **/
 
