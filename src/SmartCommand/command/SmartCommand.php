@@ -161,7 +161,7 @@ abstract class SmartCommand extends Command
 
         $firstArgumentGiven = $args[0] ?? null;
 
-        if ($firstArgumentGiven !== null && $this->tryExecuteSubCommand($sender, $firstArgumentGiven, $args)) {
+        if ($firstArgumentGiven !== null && $this->tryExecuteSubCommand($sender, $commandLabel, $args)) {
             return;
         }
 
