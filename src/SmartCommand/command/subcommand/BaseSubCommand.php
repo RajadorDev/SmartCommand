@@ -112,7 +112,7 @@ abstract class BaseSubCommand implements SubCommand
         $format = str_replace(
             ['{command_label}', '{subcommand_label}'],
             [$commandLabel ?? $this->command->getName(), $usageLabel ?? $this->getName()],
-            $this->generateArgumentsList(ltrim(self::DEFAULT_USAGE, '/'), $this->getMessages(), false, true)
+            $this->generateArgumentsList(ltrim(static::DEFAULT_USAGE, '/'), $this->getMessages(), false, true)
         ) . ($includeDescription ? " {$this->getDescription()}" : '');
         if ($usePrefix)
         {
