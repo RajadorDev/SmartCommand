@@ -1,6 +1,6 @@
 <?php
 
-namespace SmartCommand\utils;
+namespace SmartCommand\command\builder;
 
 use SmartCommand\api\SmartCommandAPI;
 use SmartCommand\command\builder\BuildErrorList;
