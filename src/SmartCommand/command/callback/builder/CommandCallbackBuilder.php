@@ -127,7 +127,7 @@ class CommandCallbackBuilder extends ExecutableCallbackBuilder
 
     /**
      * @param callable(CommandSender $sender,string $label,CommandArguments $args) $closure
-     * @return ExecutableCallbackBuilder
+     * @return $this
      */
     public function listen(callable $closure): ExecutableCallbackBuilder
     {
