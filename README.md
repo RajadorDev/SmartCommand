@@ -215,6 +215,57 @@ class PopupSubCommand extends BaseSubCommand
 }
 ```
 
+## Command/Subcommand Cooldown:
+
+You can create command/subcommand with cooldown resource:
+
+```php
+<?php
+
+use pocketmine\command\CommandSender;
+use SmartCommand\command\CommandArguments;
+use SmartCommand\command\cooldown\CooldownResult;
+use SmartCommand\command\cooldown\CooldownSmartCommand;
+
+class MyCommandWithCooldown extends CooldownSmartCommand
+{
+
+    protected static function getRuntimePermission(): string
+    {
+        return 'my.perm';
+    }
+
+    protected function prepare()
+    {}
+
+    /**
+     * It will be called only when the player is really allowed by cooldown to run this command
+     * You can choose whether you will add the player to cooldown or ignore returning CooldownResult object
+     * See the example bellow:
+     */
+    protected function onAllowedRun(CommandSender $sender, string $label, CommandArguments $args): CooldownResult
+    {
+        $iWantToAddCooldown = true;
+
+        if ($iWantToAddCooldown) {
+            return CooldownResult::ADD(
+                # The cooldown time
+                # Cooldown in mileseconds
+                # You can also use static method CooldownResult::secondsToMs() to transform it to seconds
+                1000
+            );
+        }
+
+        # It won't add the sender to the cooldown
+        return CooldownResult::IGNORE();
+    }
+
+}
+```
+
+You can also create cooldown sub commands using the abstract class: `SmartCommand\command\cooldown\subcommand\CooldownBaseSubCommand`
+
+
 ## CommandBuild
 
 You can register command for method `makeCommandBuilder` more fast and easy.
@@ -231,7 +282,7 @@ class Loader extends PluginBase
     public function onEnable() 
     {
         /**
-         * Name and description are the only required fields to build your command
+         * Name and description are the only required fields to build your command (in default __construct structure)
          */
         SmartCommandAPI::makeCommandBuilder(TestingCommand::class)
             # Setting the command name
@@ -246,4 +297,38 @@ class Loader extends PluginBase
             ->buildAndRegister('command_map_prefix');
     }
 }
+```
+
+## Callback Command/Subcommand:
+
+You can also create commands without specific class using **CallbackCommand**/**SubCommand**:
+
+```php
+
+use pocketmine\command\CommandSender;
+use SmartCommand\command\callback\CallbackSmartCommand;
+use SmartCommand\command\CommandArguments;
+use SmartCommand\command\rule\defaults\OnlyInGameCommandRule;
+
+CallbackSmartCommand::create(
+    'commandname',
+    'My command description'
+)
+->rules([
+    new OnlyInGameCommandRule
+])
+
+->createSubCommand('subcmdname', 'Sub command description', 'subcmd.perm')
+    ->listen(
+        function (CommandSender $sender, string $commandLabel, string $subCommandLabel, CommandArguments $args) {
+            $sender->sendMessage('Using sub command :)');
+        }
+    )
+
+->listen(
+    function (CommandSender $sender, string $label, CommandArguments $args) {
+        $sender->sendMessage('Hello ' . $sender->getName());
+    }
+)
+->buildAndRegister('pmmapprefix');
 ```
